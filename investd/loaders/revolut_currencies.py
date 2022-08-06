@@ -1,10 +1,9 @@
-from typing import Iterator
 from datetime import datetime
+from typing import Iterator
 
 import pandas as pd
 
-from ..model import Transaction, AssetType, Currency
-
+from investd.model import AssetType, Currency, Transaction
 
 ref_currency = Currency.PLN
 

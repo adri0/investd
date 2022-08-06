@@ -1,51 +1,52 @@
-from typing import Iterator
+import csv
+from datetime import datetime
+from typing import Generator
 
 import pandas as pd
+from pydantic import BaseModel, Field
 
-from ..model import Transaction, AssetType, Currency
-
-
-def recognise_file(path: str) -> bool:
-    if path.endswith(".csv"):
-        with open(path, "r") as f:
-            line = f.readline()
-            if line.startswith("Date,Ticker"):
-                return True
-    return False
+from investd.loaders.base import Loader
+from investd.model import AssetType, Currency, ExchangeRate, Transaction
 
 
-def load_from_file(path: str) -> Iterator[Transaction]:
-    df = pd.read_csv(path, parse_dates=["Date"], dayfirst=True)
-    df = df[~pd.isna(df["Ticker"]) & (df["Type"]=="buy")]
-    return map(lambda i_row: _convert(i_row[1]), df.iterrows())
+class RevolutStockTx(BaseModel):
+    date: datetime = Field(alias="Date")
+    ticker: str = Field(alias="Ticker")
+    type: str = Field(alias="Type")
+    quantity: float = Field(alias="Quantity")
+    price_per_share: float = Field(alias="Price per share")
+    total_amount: float = Field(alias="Total Amount")
+    currency: str = Field(alias="Currency")
+    fx_rate: float = Field(alias="FX Rate")
 
 
-def _hash_record(record: pd.Series) -> str:
-    elements = [
-        record["Ticker"], 
-        record["Date"].date(),
-        record["Date"].hour,
-        record["Date"].minute,
-        record["Quantity"]
-    ]
-    element_string = "#".join([str(el) for el in elements])
-    hash_value = hash(element_string)
-    return "{:X}".format(hash_value)[-9:]
+class RevolutStocksLoader(Loader[RevolutStockTx]):
 
+    def convert_to_tx(self, revolut_tx: RevolutStockTx) -> Transaction:
+        return Transaction(
+            timestamp=revolut_tx.date,
+            symbol=revolut_tx.ticker,
+            type=AssetType.Stock,
+            platform="Revolut",
+            currency=revolut_tx.currency,
+            amount=revolut_tx.total_amount,
+            quantity=revolut_tx.quantity,
+            price=revolut_tx.price_per_share,
+            action=revolut_tx.type
+        )
 
-def _convert(record: pd.Series) -> Transaction:
-    return Transaction(
-        id=_hash_record(record),
-        timestamp=record["Date"],
-        symbol=record["Ticker"],
-        type=AssetType.Stock,
-        platform="Revolut",
-        currency=Currency[record["Currency"]],
-        amount=record["Total Amount"],
-        quantity=record["Quantity"],
-        price=record["Price per share"],
-        exchange_rate=1 / record["FX Rate"],
-        amount_ref_currency=record["Total Amount"] / record["FX Rate"],
-        action=record["Type"].lower()
-    )
-
+    def convert_to_fx_rate(self, revolut_tx: RevolutStockTx) -> ExchangeRate:
+        return ExchangeRate(
+            timestamp=revolut_tx.date,
+            currency_from=Currency.PLN,
+            currency_to=revolut_tx.currency
+        )
+        
+    def convert_file(self, path: str) -> Generator[tuple[Transaction, ExchangeRate], None, None]:
+        with open(path, "r") as csvfile:
+            csv_reader = csv.DictReader(csvfile)
+            for row in csv_reader:
+                rev_tx = RevolutStockTx(**row)
+                tx = self.convert_to_tx(rev_tx)
+                fx_rate  = self.convert_to_fx_rate(rev_tx)
+                yield (tx, fx_rate)
