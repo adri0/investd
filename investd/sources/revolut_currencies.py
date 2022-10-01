@@ -3,18 +3,9 @@ from typing import Iterator
 
 import pandas as pd
 
-from investd.model import AssetType, Currency, Transaction
+from ..model import AssetType, Currency, Transaction
 
 ref_currency = Currency.PLN
-
-
-def recognise_file(path: str) -> bool:
-    if path.endswith(".csv"):
-        with open(path, "r") as f:
-            line = f.readline()
-            if line.startswith("Type,Completed Date,Sell Currency"):
-                return True
-    return False
 
 
 def load_from_file(path: str) -> Iterator[Transaction]:

@@ -24,7 +24,7 @@ setup(
         "pandas==1.3.*",
         "openpyxl==3.*",
         "dash==2.0.*",
-        "pydantic==1.*",
+        "pydantic==1.*"
     ],
     extras_require={
         "dev": [
@@ -33,7 +33,8 @@ setup(
             "mypy",
             "pytest",
             "pytest-cov",
-            "isort"
+            "isort",
+            "black"
         ],
     },
     entry_points={

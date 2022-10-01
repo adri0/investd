@@ -3,30 +3,20 @@ from os.path import exists
 
 import pandas as pd
 
-from .loaders import load_transactions_from_file
-from .loaders.revolut_currencies import reconciliate_exchange
+from .sources import load_all_transactions
 
 
-def build_transactions_table(*paths):
-    """ Build a transactions tables from a list of files that can be 
-        extracted using existing loaders.
-    """
-    txs = []
-    for path in path_files:
-        if not exists(path):
-            raise ValueError(f"File does not exist: {path}")
-        txs += load_transactions_from_file(path)
-    df_tx = pd.DataFrame(txs)
-    df_tx.sort_values("timestamp", inplace=True)
-    df_tx.set_index("id", inplace=True)
-    df_tx.to_csv("all_transactions.csv")
+def save_tx():
+    df_tx = load_all_transactions()
+    df_tx.to_csv("data/output/tx.csv", index=False)
+
+
 
 
 if __name__ == "__main__":
     command = sys.argv[1]
-    if command == "transactions":
-        path_files = sys.argv[2:]
-        build_transactions_table(path_files)
+    if command == "save_tx":
+        save_tx()
     elif command == "recon":
         path_files = sys.argv[2:]
         reconciliate_exchange(*path_files)

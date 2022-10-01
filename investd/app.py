@@ -1,11 +1,10 @@
 import dash
-from dash import dcc, html, dash_table as dt
-
-import plotly.express as px
 import pandas as pd
+import plotly.express as px
+from dash import dash_table as dt
+from dash import dcc, html
 
 from .components import get_state
-
 
 dash_app = dash.Dash(__name__)
 

@@ -1,30 +1,30 @@
 from datetime import datetime
+from enum import Enum
 
 from pydantic.dataclasses import dataclass
 
-from enum import Enum
-
 
 class Currency(Enum):
-    USD = 1
-    EUR = 2
-    PLN = 3
+    USD = 'USD'
+    EUR = 'EUR'
+    PLN = 'PLN'
 
 
 class AssetType(Enum):
-    ETF = 1
-    Stock = 2
-    Crypto = 3
-    FX = 4
+    ETF = 'ETF'
+    Stock = 'Stock'
+    Crypto = 'Crypto'
+    FX = 'FX'
 
 
 class Action(Enum):
-    BUY = 1
-    SELL = 2
+    BUY = 'buy'
+    SELL = 'sell'
 
 
 @dataclass
 class Transaction:
+    id: str
     timestamp: datetime
     symbol: str
     type: AssetType
