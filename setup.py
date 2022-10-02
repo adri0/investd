@@ -24,7 +24,8 @@ setup(
         "pandas==1.3.*",
         "openpyxl==3.*",
         "pydantic==1.*",
-        "PyYAML"
+        "PyYAML",
+        "click"
     ],
     extras_require={
         "dev": [

@@ -1,22 +1,28 @@
 import logging
 import sys
+from pathlib import Path
+
+import click
 
 from .source import load_txs_from_source
 
 log = logging.getLogger("investd")
 
 
-def save_tx():
+@click.group()
+def investd():
+    pass
+
+
+@click.command()
+@click.option('--output', default="data/transactions/tx.csv", help="Output path")
+def load_sources(output: Path):
     df_tx = load_txs_from_source()
-    output = "data/transactions/tx.csv"
     log.info(f"Writing {output}")
     df_tx.to_csv(output, index=False)
 
+investd.add_command(load_sources)
+
 
 if __name__ == "__main__":
-    command = sys.argv[1]
-    if command == "load_from_source":
-        save_tx()
-    else:
-        print(f"Unrecognized command {command}")
-    log.info("Finish.")
+    investd()
