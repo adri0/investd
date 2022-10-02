@@ -23,8 +23,8 @@ setup(
     install_requires=[
         "pandas==1.3.*",
         "openpyxl==3.*",
-        "dash==2.0.*",
-        "pydantic==1.*"
+        "pydantic==1.*",
+        "PyYAML"
     ],
     extras_require={
         "dev": [

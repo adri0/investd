@@ -7,15 +7,6 @@ import pandas as pd
 from ..model import AssetType, Currency, Transaction
 from .base import SourceBase
 
-currency_by_symbol = {
-    "INR.FR": Currency.EUR,
-    "BETASPXP.PL": Currency.PLN,
-    "V80A.DE": Currency.EUR,
-    "ETFBWTECH.PL": Currency.PLN,
-    "CSPX.UK": Currency.USD,
-    "VHYD.UK": Currency.USD
-}
-
 
 class XTB(SourceBase):
 
@@ -32,12 +23,6 @@ class XTB(SourceBase):
         df = df[~pd.isna(df["Symbol"])]
         return map(lambda i_row: self._convert(i_row[1]), df.iterrows())
 
-    @staticmethod
-    def parse_comment(comment: str) -> tuple[str, float, float]:
-        for match in re.finditer(r"(?P<action>BUY|SELL) (?P<quantity>[\d\.]+) @ (?P<price>[\d\.]+)", comment):
-            return match["action"], float(match["quantity"]), float(match["price"])
-        raise ValueError(f"No matches found for comment pattern in Comment: {comment}")
-
     def _convert(self, record: pd.Series) -> Transaction:
         action, quantity, price = XTB.parse_comment(record["Comment"])
         return Transaction(
@@ -46,7 +31,7 @@ class XTB(SourceBase):
             symbol=record["Symbol"],
             type=AssetType.ETF,
             platform="XTB",
-            currency=currency_by_symbol[record["Symbol"]],
+            currency=XTB.infer_currency_from_symbol(record["Symbol"]),
             amount=price * quantity,
             quantity=quantity,
             price=price,
@@ -54,3 +39,19 @@ class XTB(SourceBase):
             amount_ref_currency=abs(record["Amount"]),
             action=action.lower()
         )
+
+    @staticmethod
+    def parse_comment(comment: str) -> tuple[str, float, float]:
+        for match in re.finditer(r"(?P<action>BUY|SELL) (?P<quantity>[\d\.]+) @ (?P<price>[\d\.]+)", comment):
+            return match["action"], float(match["quantity"]), float(match["price"])
+        raise ValueError(f"No matches found for comment pattern in Comment: {comment}")
+
+    @staticmethod
+    def infer_currency_from_symbol(symbol: str) -> Currency:
+        _, country = symbol.split(".")
+        if country in ("UK", "US"):
+            return Currency.USD
+        elif country == "PL":
+            return Currency.PLN
+        else:
+            return Currency.EUR

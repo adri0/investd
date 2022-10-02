@@ -3,11 +3,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
-import pandas as pd
-from pydantic import BaseModel, Field
-
 from ..model import AssetType, Transaction
-from ..sources.base import SourceBase
+from ..source.base import SourceBase
 
 
 class RevolutStocks(SourceBase):
