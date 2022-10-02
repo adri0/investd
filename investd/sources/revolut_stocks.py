@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Iterable
 
 from ..model import AssetType, Transaction
-from ..source.base import SourceBase
+from ..sources.base import SourceBase
 
 
 class RevolutStocks(SourceBase):
