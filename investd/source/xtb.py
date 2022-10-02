@@ -14,11 +14,11 @@ class XTB(SourceBase):
 
     def parse_source_file(self, path: Path) -> Iterator[Transaction]:
         df = pd.read_excel(
-            path, 
-            sheet_name="CASH OPERATION HISTORY",        
-            skiprows=10, 
+            path,
+            sheet_name="CASH OPERATION HISTORY",
+            skiprows=10,
             usecols=["ID", "Type", "Time", "Comment", "Symbol", "Amount"],
-            parse_dates=["Time"]
+            parse_dates=["Time"],
         )
         df = df[~pd.isna(df["Symbol"])]
         return map(lambda i_row: self._convert(i_row[1]), df.iterrows())
@@ -37,12 +37,14 @@ class XTB(SourceBase):
             price=price,
             exchange_rate=abs(record["Amount"]) / price / quantity,
             amount_ref_currency=abs(record["Amount"]),
-            action=action.lower()
+            action=action.lower(),
         )
 
     @staticmethod
     def parse_comment(comment: str) -> tuple[str, float, float]:
-        for match in re.finditer(r"(?P<action>BUY|SELL) (?P<quantity>[\d\.]+) @ (?P<price>[\d\.]+)", comment):
+        for match in re.finditer(
+            r"(?P<action>BUY|SELL) (?P<quantity>[\d\.]+) @ (?P<price>[\d\.]+)", comment
+        ):
             return match["action"], float(match["quantity"]), float(match["price"])
         raise ValueError(f"No matches found for comment pattern in Comment: {comment}")
 

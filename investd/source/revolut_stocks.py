@@ -27,7 +27,8 @@ class RevolutStocks(SourceBase):
                     amount=row["Total Amount"],
                     quantity=row["Quantity"],
                     exchange_rate=row["FX Rate"],
-                    amount_ref_currency=float(row["Total Amount"]) * float(row["FX Rate"]),
+                    amount_ref_currency=float(row["Total Amount"])
+                    * float(row["FX Rate"]),
                     price=row["Price per share"],
-                    action=row["Type"].lower()
+                    action=row["Type"].lower(),
                 )

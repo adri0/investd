@@ -1,5 +1,4 @@
 import logging
-import sys
 from pathlib import Path
 
 import click
@@ -15,7 +14,7 @@ def investd():
 
 
 @click.command(name="ingest-sources")
-@click.option('--output', default="data/transactions/tx.csv", help="Output path")
+@click.option("--output", default="data/transactions/tx.csv", help="Output path")
 def ingest_sources_cli(output: Path):
     df_tx = ingest_sources()
     log.info(f"Writing {output}")

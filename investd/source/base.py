@@ -9,7 +9,6 @@ log = logging.getLogger(__name__)
 
 
 class SourceBase(metaclass=abc.ABCMeta):
-
     @property
     @abc.abstractmethod
     def source_name(self) -> str:

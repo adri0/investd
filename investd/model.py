@@ -5,21 +5,21 @@ from pydantic.dataclasses import dataclass
 
 
 class Currency(Enum):
-    USD = 'USD'
-    EUR = 'EUR'
-    PLN = 'PLN'
+    USD = "USD"
+    EUR = "EUR"
+    PLN = "PLN"
 
 
 class AssetType(Enum):
-    ETF = 'ETF'
-    Stock = 'Stock'
-    Crypto = 'Crypto'
-    FX = 'FX'
+    ETF = "ETF"
+    Stock = "Stock"
+    Crypto = "Crypto"
+    FX = "FX"
 
 
 class Action(Enum):
-    BUY = 'buy'
-    SELL = 'sell'
+    BUY = "buy"
+    SELL = "sell"
 
 
 @dataclass
