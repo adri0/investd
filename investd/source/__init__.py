@@ -13,7 +13,7 @@ sources: list[Type[SourceBase]] = [
 ]
 
 
-def load_txs_from_source() -> pd.DataFrame:
+def ingest_sources() -> pd.DataFrame:
     df_tx = pd.DataFrame(columns=Transaction.__dataclass_fields__.keys())
     for source_class in sources:
         source = source_class()
