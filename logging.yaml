@@ -1,0 +1,24 @@
+version: 1
+disable_existing_loggers: false
+formatters:
+  default:
+    format: '%(asctime)s %(name)s [%(levelname)s]: %(message)s'
+  root:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: default
+  root_console:
+    class: logging.StreamHandler
+    formatter: root
+loggers:
+  app:
+    handlers:
+    - console
+    level: INFO
+    propagate: false
+root:
+  handlers:
+  - root_console
+  level: INFO
