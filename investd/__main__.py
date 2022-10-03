@@ -5,25 +5,28 @@ import click
 
 from .sources import ingest_sources
 
-log = logging.getLogger("investd")
-
-
-@click.group()
-def investd():
-    pass
+app_name = "investd"
+log = logging.getLogger(app_name)
 
 
 @click.command(name="ingest-sources")
-@click.option("--output", default="data/transactions/tx.csv", help="Output path")
+@click.option(
+    "--output",
+    type=click.Path(dir_okay=False, writable=True),
+    default="data/transactions/tx.csv",
+    help="Output path",
+)
 def ingest_sources_cmd(output: Path):
     df_tx = ingest_sources()
     log.info(f"Writing {output}")
     df_tx.to_csv(output, index=False)
 
 
-investd.add_command(ingest_sources_cmd)
-
+cli = click.Group(
+    name=app_name,
+    help="investd - A tool for summarizing investments.",
+    commands=[ingest_sources_cmd],
+)
 
 if __name__ == "__main__":
-    investd()
-    log.info("Finished!")
+    cli()

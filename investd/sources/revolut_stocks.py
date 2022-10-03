@@ -3,8 +3,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
-from ..model import AssetType, Transaction
-from ..sources.base import SourceBase
+from ..model import Action, AssetType, Currency, Transaction
+from .base import SourceBase
 
 
 class RevolutStocks(SourceBase):
@@ -23,12 +23,13 @@ class RevolutStocks(SourceBase):
                     symbol=row["Ticker"],
                     type=AssetType.Stock,
                     platform="Revolut",
-                    currency=row["Currency"],
-                    amount=row["Total Amount"],
-                    quantity=row["Quantity"],
-                    exchange_rate=row["FX Rate"],
-                    amount_ref_currency=float(row["Total Amount"])
-                    * float(row["FX Rate"]),
-                    price=row["Price per share"],
-                    action=row["Type"].lower(),
+                    currency=Currency(row["Currency"]),
+                    amount=float(row["Total Amount"]),
+                    quantity=float(row["Quantity"]),
+                    exchange_rate=float(row["FX Rate"]),
+                    amount_ref_currency=(
+                        float(row["Total Amount"]) * float(row["FX Rate"])
+                    ),
+                    price=float(row["Price per share"]),
+                    action=Action(row["Type"].lower()),
                 )

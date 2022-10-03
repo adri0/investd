@@ -25,7 +25,8 @@ setup(
         "openpyxl==3.*",
         "pydantic==1.*",
         "PyYAML",
-        "click"
+        "click",
+        "python-dotenv",
     ],
     extras_require={
         "dev": [
@@ -35,13 +36,11 @@ setup(
             "pytest",
             "pytest-cov",
             "isort",
-            "black"
+            "black",
         ],
     },
     entry_points={
-        "investd.__main__": {
-            "main = investd.__main__:build_transactions_table"
-        }
+        "investd.__main__": {"main = investd.__main__:build_transactions_table"}
     },
     tests_require=["pytest", "pytest-cov"],
 )
