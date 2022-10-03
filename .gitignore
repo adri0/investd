@@ -22,3 +22,6 @@ MANIFEST
 
 # mypy
 .mypy_cache/
+
+# IDE
+.vscode

@@ -3,6 +3,7 @@ from pathlib import Path
 
 import click
 
+from .config import PERSIST_PATH
 from .sources import ingest_sources
 
 app_name = "investd"
@@ -13,7 +14,7 @@ log = logging.getLogger(app_name)
 @click.option(
     "--output",
     type=click.Path(dir_okay=False, writable=True),
-    default="data/transactions/tx.csv",
+    default=PERSIST_PATH / "tx.csv",
     help="Output path",
 )
 def ingest_sources_cmd(output: Path):
