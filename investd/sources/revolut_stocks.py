@@ -22,7 +22,7 @@ class RevolutStocks(SourceBase):
                     timestamp=datetime.strptime(row["Date"], "%d/%m/%Y %H:%M:%S"),
                     symbol=row["Ticker"],
                     type=AssetType.Stock,
-                    platform="Revolut",
+                    platform=self.source_name,
                     currency=Currency(row["Currency"]),
                     amount=float(row["Total Amount"]),
                     quantity=float(row["Quantity"]),

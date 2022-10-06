@@ -30,7 +30,7 @@ class XTB(SourceBase):
             timestamp=record["Time"],
             symbol=record["Symbol"],
             type=AssetType.ETF,
-            platform="XTB",
+            platform=self.source_name,
             currency=XTB.infer_currency_from_symbol(record["Symbol"]),
             amount=price * quantity,
             quantity=quantity,

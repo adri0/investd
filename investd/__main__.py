@@ -19,6 +19,7 @@ log = logging.getLogger(app_name)
 )
 def ingest_sources_cmd(output: Path):
     df_tx = ingest_sources()
+    df_tx.sort_values(by="timestamp", ascending=False, inplace=True)
     log.info(f"Writing {output}")
     df_tx.to_csv(output, index=False)
 
