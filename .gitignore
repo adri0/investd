@@ -27,6 +27,6 @@ MANIFEST
 .vscode
 
 # Python notebooks
-.ipynb
-.ipynb_checkpoints
-.html
+**.ipynb
+**.ipynb_checkpoints
+**.html
