@@ -4,7 +4,7 @@ from typing import Iterator
 
 import pandas as pd
 
-from ..model import AssetType, Currency, Transaction
+from ..model import Action, AssetType, Currency, Transaction
 from .base import SourceBase
 
 
@@ -37,7 +37,7 @@ class XTB(SourceBase):
             price=price,
             exchange_rate=abs(record["Amount"]) / price / quantity,
             amount_ref_currency=abs(record["Amount"]),
-            action=action.lower(),
+            action=Action(action.upper()),
         )
 
     @staticmethod

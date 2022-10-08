@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 
 from .config import PERSIST_PATH
-from .sources import ingest_sources
+from .sources import ingest_sources_as_df
 
 app_name = "investd"
 log = logging.getLogger(app_name)
@@ -18,8 +18,8 @@ log = logging.getLogger(app_name)
     help="Output path",
 )
 def ingest_sources_cmd(output: Path):
-    df_tx = ingest_sources()
-    df_tx.sort_values(by="timestamp", ascending=False, inplace=True)
+    df_tx = ingest_sources_as_df()
+    df_tx.sort_values(by="timestamp", ascending=True, inplace=True)
     log.info(f"Writing {output}")
     df_tx.to_csv(output, index=False)
 

@@ -1,3 +1,10 @@
+"""
+    Configuration
+
+    Config variables are obtained from environment variables and converted
+    to their object type.
+"""
+
 import logging
 import os
 import sys
@@ -10,7 +17,7 @@ log = logging.getLogger(__name__)
 
 SOURCE_BASE_PATH = Path(os.getenv("SOURCE_BASE_PATH", "data/source"))
 PERSIST_PATH = Path(os.getenv("PERSIST_PATH", "data/persist"))
-BASE_CURRENCY = Currency(os.getenv("BASE_CURRENCY", "USD"))
+REF_CURRENCY = Currency(os.getenv("REF_CURRENCY", "USD"))
 
 
 def get_config_variables() -> dict[str, Any]:

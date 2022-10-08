@@ -14,27 +14,57 @@
 # ---
 
 # %%
+from datetime import datetime
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from IPython.display import Markdown
+
+from investd.config import REF_CURRENCY
+from investd.model import Transaction
+from investd.portfolio import net_worth_by_asset_type, total_net_worth
 
 sns.set_theme()
 
-# %%
-df = pd.read_csv("../../sample_data/persist/tx.csv")
-
 # %% [markdown]
-# ## Portfolio evolution
+# # Portfolio overview
 
 # %%
-figure = sns.lineplot(x="timestamp", y="amount_ref_currency", data=df)
+now = datetime.now()
 
-# %%
-pd.DataFrame(
-    [df["amount_ref_currency"].sum()],
-    index=["Total Amount (PLN)"]
+Markdown(
+    f"""
+Generated date: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{REF_CURRENCY.name}**
+"""
 )
 
 # %%
-df_by_currency = df.groupby("currency")[["amount", "amount_ref_currency"]].sum()
-df_by_currency.columns = ["Amount", "Amount Ref Currency"]
-df_by_currency
+df_tx = Transaction.from_csv("../../sample_data/persist/tx.csv")
+df_tx = df_tx[df_tx["timestamp"] <= now]
+
+# %%
+Markdown(
+    f"""
+### Net Worth 
+
+{total_net_worth(df_tx):.2f} {REF_CURRENCY}
+"""
+)
+
+# %%
+pd.DataFrame(
+    net_worth_by_asset_type(df_tx).apply(lambda val: f"{val:.2f} {REF_CURRENCY}")
+)
+
+# %% [markdown]
+# ### Portfolio evolution
+
+# %%
+fig, ax = plt.subplots()
+fig.autofmt_xdate()
+
+cumsum = df_tx["amount_ref_currency"].cumsum()
+df_cum = pd.DataFrame({"Total value": cumsum, "Time": df_tx["timestamp"]})
+
+fig = sns.lineplot(x="Time", y="Total value", data=df_cum, ax=ax)
