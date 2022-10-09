@@ -4,7 +4,10 @@ from pathlib import Path
 
 import click
 
+from investd import reports
+
 from .config import PERSIST_PATH, REPORTS_PATH
+from .reports import generate_report
 from .sources import ingest_sources_as_df
 
 app_name = "investd"
@@ -31,13 +34,9 @@ def ingest_sources_cmd(output: Path):
     default="overview",
     help="Report name",
 )
-@click.option(
-    "--output-dir",
-    default=REPORTS_PATH,
-    help="Directory where to save report",
-)
-def report_cmd(report: str, outdir: PathLike):
-    generate_report(report, outdir)
+def report_cmd(report: str):
+    reports_module = Path(reports.__file__).parent
+    generate_report(reports_module / f"{report}.py")
 
 
 cli = click.Group(
