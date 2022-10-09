@@ -21,7 +21,7 @@ import pandas as pd
 import seaborn as sns
 from IPython.display import Markdown
 
-from investd.config import REF_CURRENCY
+from investd.config import PERSIST_PATH, REF_CURRENCY
 from investd.model import Transaction
 from investd.portfolio import net_worth_by_asset_type, total_net_worth
 
@@ -40,7 +40,7 @@ Generated date: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{REF_CURR
 )
 
 # %%
-df_tx = Transaction.from_csv("../../sample_data/persist/tx.csv")
+df_tx = Transaction.from_csv(PERSIST_PATH / "tx.csv")
 df_tx = df_tx[df_tx["timestamp"] <= now]
 
 # %%

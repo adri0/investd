@@ -17,6 +17,7 @@ log = logging.getLogger(__name__)
 
 SOURCE_BASE_PATH = Path(os.getenv("SOURCE_BASE_PATH", "data/source"))
 PERSIST_PATH = Path(os.getenv("PERSIST_PATH", "data/persist"))
+REPORTS_PATH = Path(os.getenv("REPORTS_PATH", "data/reports"))
 REF_CURRENCY = Currency(os.getenv("REF_CURRENCY", "USD"))
 
 
@@ -33,8 +34,6 @@ log.info(
     " - ".join([f"{name}: {value}" for name, value in get_config_variables().items()])
 )
 
-if not SOURCE_BASE_PATH.exists():
-    os.makedirs(SOURCE_BASE_PATH)
-
-if not PERSIST_PATH.exists():
-    os.makedirs(PERSIST_PATH)
+for conf_path in (SOURCE_BASE_PATH, PERSIST_PATH, REPORTS_PATH):
+    if not conf_path.exists():
+        os.makedirs(conf_path)
