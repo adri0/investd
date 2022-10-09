@@ -1,6 +1,11 @@
 from datetime import datetime
 from enum import Enum
+from os import PathLike
+from typing import Type
+from unicodedata import category
 
+import numpy as np
+import pandas as pd
 from pydantic.dataclasses import dataclass
 
 
@@ -9,6 +14,9 @@ class Currency(Enum):
     EUR = "EUR"
     PLN = "PLN"
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class AssetType(Enum):
     ETF = "ETF"
@@ -16,10 +24,16 @@ class AssetType(Enum):
     Crypto = "Crypto"
     FX = "FX"
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Action(Enum):
-    BUY = "buy"
-    SELL = "sell"
+    BUY = "BUY"
+    SELL = "SELL"
+
+    def __str__(self) -> str:
+        return self.name
 
 
 @dataclass
@@ -37,21 +51,19 @@ class Transaction:
     amount_ref_currency: float
     action: Action
 
-
-@dataclass
-class Portfolio:
-    to_date: datetime
-    total_invested: float
-
-
-@dataclass
-class AssetInvested:
-    symbol: str
-    type: AssetType
-    currency: Currency
-    quantity: float
-    amount: float
-    amount_ref_cur: float
+    @classmethod
+    def from_csv(cls, path: PathLike) -> pd.DataFrame:
+        df_tx = pd.read_csv(
+            path,
+            converters={
+                name: field.type if field.type not in (datetime,) else pd.to_datetime
+                for name, field in Transaction.__dataclass_fields__.items()
+            },
+        )
+        categories = ("type", "platform", "currency", "action")
+        for cat in categories:
+            df_tx[cat] = df_tx[cat].astype("category")
+        return df_tx
 
 
 @dataclass
@@ -59,3 +71,10 @@ class ExchangeRate:
     timestamp: datetime
     currency_from: Currency
     currency_to: Currency
+
+
+def get_converters(a_type: Type) -> np.dtype:
+    if a_type is datetime:
+        return np.dtype("datetime64[s]")
+    else:
+        return np.dtype(a_type)

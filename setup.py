@@ -21,17 +21,21 @@ setup(
     include_package_data=False,
     zip_safe=False,
     install_requires=[
-        "pandas==1.3.*",
-        "openpyxl==3.*",
-        "pydantic==1.*",
+        "pandas",
+        "openpyxl",
+        "pydantic",
         "PyYAML",
         "click",
         "python-dotenv",
+        "ipython",
+        "jupyter",
+        "jupytext",
+        "seaborn",
     ],
     extras_require={
         "dev": [
-            "pip==22.2.*",
-            "wheel>=0.37.0",
+            "pip",
+            "wheel",
             "mypy",
             "pytest",
             "pytest-cov",
@@ -39,8 +43,6 @@ setup(
             "black",
         ],
     },
-    entry_points={
-        "investd.__main__": {"main = investd.__main__:build_transactions_table"}
-    },
+    entry_points={"investd.__main__": {"main = investd.__main__:cli"}},
     tests_require=["pytest", "pytest-cov"],
 )

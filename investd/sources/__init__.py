@@ -10,7 +10,7 @@ from . import revolut_stocks, xtb
 sources: list[Type[SourceBase]] = [xtb.XTB, revolut_stocks.RevolutStocks]
 
 
-def ingest_sources() -> pd.DataFrame:
+def ingest_sources_as_df() -> pd.DataFrame:
     df_tx = pd.DataFrame(columns=Transaction.__dataclass_fields__.keys())
     for source_class in sources:
         source = source_class()
