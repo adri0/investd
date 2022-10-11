@@ -39,10 +39,11 @@ setup(
             "mypy",
             "pytest",
             "pytest-cov",
+            "pytest-dotenv",
             "isort",
             "black",
         ],
     },
     entry_points={"investd.__main__": {"main = investd.__main__:cli"}},
-    tests_require=["pytest", "pytest-cov"],
+    tests_require=["pytest", "pytest-cov", "pytest-dotenv"],
 )

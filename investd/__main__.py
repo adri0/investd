@@ -1,13 +1,10 @@
 import logging
-from os import PathLike
 from pathlib import Path
 
 import click
 
-from investd import reports
-
-from .config import PERSIST_PATH, REPORTS_PATH
-from .reports import generate_report
+from . import reports
+from .config import PERSIST_PATH
 from .sources import ingest_sources_as_df
 
 app_name = "investd"
@@ -35,8 +32,7 @@ def ingest_sources_cmd(output: Path):
     help="Report name",
 )
 def report_cmd(report: str):
-    reports_module = Path(reports.__file__).parent
-    generate_report(reports_module / f"{report}.py")
+    reports.generate_report(report)
 
 
 cli = click.Group(
