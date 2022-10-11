@@ -1,0 +1,2 @@
+id,timestamp,symbol,type,platform,currency,amount,quantity,price,exchange_rate,amount_ref_currency,action
+test-tx,2022-09-11 21:05:31,TESTCOIN,Crypto,test-source,USD,1.0,1.0,1.0,1.0,1.0,BUY

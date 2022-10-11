@@ -32,8 +32,7 @@ def ingest_sources_cmd(output: Path):
     help="Report name",
 )
 def report_cmd(report: str):
-    reports_module = Path(reports.__file__).parent
-    reports.generate_report(reports_module / f"{report}.py")
+    reports.generate_report(report)
 
 
 cli = click.Group(
