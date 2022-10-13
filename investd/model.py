@@ -71,10 +71,3 @@ class ExchangeRate:
     timestamp: datetime
     currency_from: Currency
     currency_to: Currency
-
-
-def get_converters(a_type: Type) -> np.dtype:
-    if a_type is datetime:
-        return np.dtype("datetime64[s]")
-    else:
-        return np.dtype(a_type)

@@ -20,7 +20,6 @@ log = logging.getLogger(app_name)
 )
 def ingest_sources_cmd(output: Path):
     df_tx = ingest_sources_as_df()
-    df_tx.sort_values(by="timestamp", ascending=True, inplace=True)
     log.info(f"Writing {output}")
     df_tx.to_csv(output, index=False)
 
@@ -31,7 +30,17 @@ def ingest_sources_cmd(output: Path):
     default="overview",
     help="Report name",
 )
-def report_cmd(report: str):
+@click.option(
+    "--ingest",
+    "-i",
+    default=False,
+    help="Ingests sources before generating report",
+    is_flag=True,
+)
+def report_cmd(report: str, ingest: bool):
+    if ingest:
+        df_tx = ingest_sources_as_df()
+        df_tx.to_csv(PERSIST_PATH / "tx.csv", index=False)
     reports.generate_report(report)
 
 
