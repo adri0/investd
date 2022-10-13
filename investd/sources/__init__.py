@@ -17,4 +17,5 @@ def ingest_sources_as_df() -> pd.DataFrame:
         df_tx = pd.concat(
             [df_tx, pd.DataFrame([tx for tx in source.load_transactions()])]
         )
+    df_tx.sort_values(by="timestamp", ascending=True, inplace=True)
     return df_tx
