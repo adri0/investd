@@ -23,7 +23,7 @@ import seaborn as sns
 from IPython.display import Markdown
 
 from investd.config import PERSIST_PATH, REF_CURRENCY
-from investd.metrics import invested_amount_by_asset_type, total_invested
+from investd.metrics import invested_amount_by_col, total_invested
 from investd.model import Transaction
 
 sns.set_theme()
@@ -55,7 +55,7 @@ Markdown(
 
 # %%
 pd.DataFrame(
-    invested_amount_by_asset_type(df_tx).apply(lambda val: f"{val:.2f} {REF_CURRENCY}")
+    invested_amount_by_col(df_tx, "type").apply(lambda val: f"{val:.2f} {REF_CURRENCY}")
 )
 
 # %% [markdown]

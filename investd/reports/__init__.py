@@ -32,7 +32,7 @@ def generate_report(notebook_name: str) -> Path:
 
 def _save_report(name: str, content: str) -> Path:
     today = datetime.today().strftime("%Y-%m-%d")
-    filename = f"{name}_{today}_{str(REF_CURRENCY)}.html"
+    filename = f"{name}_{today}_{REF_CURRENCY}.html"
     report_path = REPORTS_PATH / filename
     with report_path.open("w") as out_file:
         out_file.write(content)

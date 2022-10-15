@@ -9,7 +9,7 @@ from investd.sources.revolut_stocks import RevolutStocks
 def test_parse_revolut_stocks(path_revolut_csv):
     revolut_source = RevolutStocks()
     txs = list(revolut_source.parse_source_file(path_revolut_csv))
-    assert len(txs) == 4
+    assert len(txs) == 5
     tx: Transaction = txs[0]
     assert tx.id == ""
     assert tx.symbol == "AAPL"
