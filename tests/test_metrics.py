@@ -35,23 +35,25 @@ def test_invested_ref_amount_col(
         (
             "type",
             pd.Series(
-                {
-                    (Currency.USD, AssetType.Stock): 190.0,
-                    (Currency.USD, AssetType.ETF): 0.0,
-                    (Currency.EUR, AssetType.Stock): 0.0,
-                    (Currency.EUR, AssetType.ETF): 300.0,
-                }
+                [190.0, 0.0, 0.0, 300.0],
+                index=pd.MultiIndex.from_product(
+                    [
+                        pd.Categorical([Currency.USD, Currency.EUR]),
+                        pd.Categorical([AssetType.Stock, AssetType.ETF]),
+                    ]
+                ),
             ),
         ),
         (
             "platform",
             pd.Series(
-                {
-                    (Currency.USD, "revolut_stocks"): 190.0,
-                    (Currency.USD, "xtb"): 0.0,
-                    (Currency.EUR, "revolut_stocks"): 0.0,
-                    (Currency.EUR, "xtb"): 300.0,
-                }
+                [190.0, 0.0, 0.0, 300.0],
+                index=pd.MultiIndex.from_product(
+                    [
+                        pd.Categorical([Currency.USD, Currency.EUR]),
+                        pd.Categorical(["revolut_stocks", "xtb"]),
+                    ]
+                ),
             ),
         ),
     ],
@@ -60,4 +62,4 @@ def test_invested_amount_currency_amount_col(
     df_tx_minimal: pd.DataFrame, col: str, expected: pd.core.generic.NDFrame
 ):
     ndf = invested_amount_original_currency_by_col(df_tx_minimal, col)
-    assert expected.equals(ndf)
+    assert ndf.equals(expected)

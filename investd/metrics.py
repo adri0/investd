@@ -50,5 +50,5 @@ def invested_amount_original_currency_by_col(
     Agregate invested amount by currency.
     """
     df_tx = add_signed_cols(df_tx)
-    grouping = ["currency", col] if col != "currency" else col
+    grouping: list[str] | str = ["currency", col] if col != "currency" else col
     return df_tx.groupby(grouping)["amount_signed"].sum()
