@@ -24,7 +24,7 @@ def signed_ref_amount(df_tx: pd.DataFrame) -> pd.DataFrame:
     return df_tx
 
 
-def total_invested(df_tx: pd.DataFrame) -> float:
+def total_invested_ref_currency(df_tx: pd.DataFrame) -> float:
     """
     Calculates total invested amount in the reference currency.
     """
@@ -32,7 +32,7 @@ def total_invested(df_tx: pd.DataFrame) -> float:
     return df_tx["signed_ref_amount"].sum()
 
 
-def invested_amount_by_col(df_tx: pd.DataFrame, col: str) -> pd.Series:
+def invested_ref_amount_by_col(df_tx: pd.DataFrame, col: str) -> pd.Series:
     """
     Generates a Series with invested amount by asset type in the reference currency.
     """

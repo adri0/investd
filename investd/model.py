@@ -65,20 +65,6 @@ class Transaction:
             df_tx[cat] = df_tx[cat].astype("category")
         return df_tx
 
-    @classmethod
-    def from_df(cls, df: pd.DataFrame) -> pd.DataFrame:
-        df_tx = pd.read_csv(
-            path,
-            converters={
-                name: field.type if field.type not in (datetime,) else pd.to_datetime
-                for name, field in Transaction.__dataclass_fields__.items()
-            },
-        )
-        categories = ("type", "platform", "currency", "action")
-        for cat in categories:
-            df_tx[cat] = df_tx[cat].astype("category")
-        return df_tx
-
 
 @dataclass
 class ExchangeRate:
