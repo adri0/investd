@@ -59,8 +59,10 @@ df = pd.DataFrame(invested_ref_amount_by_col(df_tx, "type"))
 df.columns = [REF_CURRENCY]
 df.index.set_names("", inplace=True)
 df = df.applymap(round, ndigits=2)
+df["%"] = round(df[REF_CURRENCY] / df[REF_CURRENCY].sum() * 100, ndigits=1)
 
 display(df)
+fig = df.plot.pie(y="%")
 
 # %% [markdown]
 # ### Invested amount by currency
@@ -71,8 +73,10 @@ df = pd.DataFrame(invested_ref_amount_by_col(df_tx, "currency"))
 df.columns = [REF_CURRENCY]
 df.index.set_names("", inplace=True)
 df = df.applymap(round, ndigits=2)
+df["%"] = round(df[REF_CURRENCY] / df[REF_CURRENCY].sum() * 100, ndigits=1)
 
 display(df)
+fig = df.plot.pie(y="%")
 
 # %% [markdown]
 # ### Invested amount evolution
@@ -80,11 +84,10 @@ display(df)
 # %%
 fig, ax = plt.subplots()
 fig.autofmt_xdate()
-ax.set_title("Investment Evolution")
 
 cumsum = df_tx["amount_ref_currency"].cumsum()
-df_cum = pd.DataFrame({"Total value": cumsum, "Time": df_tx["timestamp"]})
+df_cum = pd.DataFrame({REF_CURRENCY: cumsum, "Date": df_tx["timestamp"]})
 
-rep = sns.lineplot(x="Time", y="Total value", data=df_cum, ax=ax)
+rep = sns.lineplot(x="Date", y=REF_CURRENCY, data=df_cum, ax=ax)
 
 # %%
