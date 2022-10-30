@@ -43,7 +43,7 @@ def invested_ref_amount_by_col(df_tx: pd.DataFrame, col: str) -> pd.Series:
     return df_tx.groupby(col)["amount_ref_currency_signed"].sum()
 
 
-def invested_amount_original_currency_by_col(
+def invested_amount_original_cur_by_col(
     df_tx: pd.DataFrame, col: str
 ) -> pd.core.generic.NDFrame:
     """

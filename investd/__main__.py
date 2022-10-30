@@ -33,7 +33,7 @@ def ingest_sources_cmd(output: Path):
 @click.option(
     "--ingest",
     "-i",
-    default=False,
+    default=True,
     help="Ingests sources before generating report",
     is_flag=True,
 )
@@ -41,7 +41,8 @@ def report_cmd(report: str, ingest: bool):
     if ingest:
         df_tx = ingest_sources_as_df()
         df_tx.to_csv(PERSIST_PATH / "tx.csv", index=False)
-    reports.generate_report(report)
+    path_output = reports.generate_report(report)
+    log.info(f"Report created: {path_output}")
 
 
 cli = click.Group(

@@ -15,12 +15,11 @@
 
 # %%
 from datetime import datetime
-from turtle import title
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from IPython.display import Markdown
+from IPython.display import Markdown, display
 
 from investd.config import PERSIST_PATH, REF_CURRENCY
 from investd.metrics import invested_ref_amount_by_col, total_invested_ref_currency
@@ -33,10 +32,9 @@ sns.set_theme()
 
 # %%
 now = datetime.now()
-
 Markdown(
-    f"""
-Generated date: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{REF_CURRENCY.name}**
+f"""
+Generated at: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{REF_CURRENCY}**
 """
 )
 
@@ -44,24 +42,40 @@ Generated date: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{REF_CURR
 df_tx = Transaction.from_csv(PERSIST_PATH / "tx.csv")
 df_tx = df_tx[df_tx["timestamp"] <= now]
 
-# %%
-Markdown(
-    f"""
-### Net Worth 
+# %% [markdown]
+# ### Invested amount
 
+# %%
+Markdown(f"""
 {total_invested_ref_currency(df_tx):.2f} {REF_CURRENCY}
-"""
-)
-
-# %%
-pd.DataFrame(
-    invested_ref_amount_by_col(df_tx, "type").apply(
-        lambda val: f"{val:.2f} {REF_CURRENCY}"
-    )
-)
+""")
 
 # %% [markdown]
-# ### Portfolio evolution
+# ### Invested amount by asset type
+
+# %%
+df = pd.DataFrame(invested_ref_amount_by_col(df_tx, "type"))
+
+df.columns = [REF_CURRENCY]
+df.index.set_names("", inplace=True)
+df = df.applymap(round, ndigits=2)
+
+display(df)
+
+# %% [markdown]
+# ### Invested amount by currency
+
+# %%
+df = pd.DataFrame(invested_ref_amount_by_col(df_tx, "currency"))
+
+df.columns = [REF_CURRENCY]
+df.index.set_names("", inplace=True)
+df = df.applymap(round, ndigits=2)
+
+display(df)
+
+# %% [markdown]
+# ### Invested amount evolution
 
 # %%
 fig, ax = plt.subplots()
@@ -70,6 +84,7 @@ ax.set_title("Investment Evolution")
 
 cumsum = df_tx["amount_ref_currency"].cumsum()
 df_cum = pd.DataFrame({"Total value": cumsum, "Time": df_tx["timestamp"]})
-sns.lineplot(x="Time", y="Total value", data=df_cum, ax=ax)
+
+rep = sns.lineplot(x="Time", y="Total value", data=df_cum, ax=ax)
 
 # %%

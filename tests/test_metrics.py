@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 
 from investd.metrics import (
-    invested_amount_original_currency_by_col,
+    invested_amount_original_cur_by_col,
     invested_ref_amount_by_col,
     total_invested_ref_currency,
 )
@@ -61,5 +61,5 @@ def test_invested_ref_amount_col(
 def test_invested_amount_currency_amount_col(
     df_tx_minimal: pd.DataFrame, col: str, expected: pd.core.generic.NDFrame
 ):
-    ndf = invested_amount_original_currency_by_col(df_tx_minimal, col)
+    ndf = invested_amount_original_cur_by_col(df_tx_minimal, col)
     assert ndf.equals(expected)
