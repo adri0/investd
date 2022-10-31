@@ -19,6 +19,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from dateutil import relativedelta
 from IPython.display import Markdown, display
 
 from investd import views
@@ -73,7 +74,15 @@ fig = df.plot.pie(y=str(REF_CURRENCY))
 fig.get_legend().remove()
 
 # %% [markdown]
-# ### Invested amount evolution
+# ### Invested amount over time
+
+# %%
+df = views.amount_over_time(df_tx, period="Y")
+display(df)
+
+# %%
+df = views.amount_over_time(df_tx, period="M").iloc[-12:]
+display(df)
 
 # %%
 fig, ax = plt.subplots()
@@ -83,5 +92,3 @@ cumsum = df_tx["amount_ref_currency"].cumsum()
 df_cum = pd.DataFrame({REF_CURRENCY: cumsum, "Date": df_tx["timestamp"]})
 
 fig = sns.lineplot(x="Date", y=REF_CURRENCY, data=df_cum, ax=ax)
-
-# %%

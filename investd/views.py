@@ -4,7 +4,8 @@
     Functions for calculating portfolio metrics, such as net worth, etc.
 """
 
-from typing import Any, Iterable
+from datetime import date
+from typing import Any, Iterable, Optional
 
 import pandas as pd
 
@@ -47,11 +48,11 @@ def to_nice_df(ndf: pd.core.generic.NDFrame, columns: Iterable[str]) -> pd.DataF
     return df
 
 
-def add_pct_col(df: pd.DataFrame, based_on_col: Any) -> pd.DataFrame:
+def add_pct_col(
+    df: pd.DataFrame, based_on_col: Any, pct_col_name: str = "%"
+) -> pd.DataFrame:
     """Adds percentage column to dataframe."""
-    df[f"% ({based_on_col})"] = round(
-        df[based_on_col] / df[based_on_col].sum() * 100, ndigits=1
-    )
+    df[pct_col_name] = round(df[based_on_col] / df[based_on_col].sum() * 100, ndigits=1)
     return df
 
 
@@ -89,3 +90,19 @@ def invested_amount_original_cur_by_col(
     df_tx = _add_signed_cols(df_tx)
     grouping: list[str] | str = ["currency", col] if col != "currency" else col
     return df_tx.groupby(grouping)["amount_signed"].sum()
+
+
+def amount_over_time(df_tx: pd.DataFrame, period: str) -> pd.DataFrame:
+    """
+    Amounts aggregate by periods over time.
+    """
+    df_tx = _add_signed_cols(df_tx)
+    df_ot = (
+        df_tx[["timestamp", "amount_ref_currency_signed"]]
+        .groupby(pd.Grouper(key="timestamp", freq=period))
+        .sum()
+    )
+    df_ot.index = df_ot.index.to_period()
+    df_ot["cumsum"] = df_ot["amount_ref_currency_signed"].cumsum()
+    df_ot = to_nice_df(df_ot, columns=[str(REF_CURRENCY), f"Cumulated {REF_CURRENCY}"])
+    return df_ot

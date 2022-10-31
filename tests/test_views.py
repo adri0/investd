@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Any, Iterable
 
 import pandas as pd
@@ -13,7 +14,7 @@ def test_total_invested_amount(df_tx_minimal: pd.DataFrame):
 
 
 @pytest.mark.parametrize(
-    "col,expected",
+    "col, expected",
     [
         ("type", pd.Series({Asset.Stock: 849, Asset.ETF: 1500})),
         ("platform", pd.Series({"revolut_stocks": 849, "xtb": 1500})),
@@ -44,7 +45,7 @@ def _multi_cat_series(
 
 
 @pytest.mark.parametrize(
-    "col,expected",
+    "col, expected",
     [
         ("currency", pd.Series({Cur.USD: 190.0, Cur.EUR: 300.0})),
         (
@@ -74,8 +75,35 @@ def test_amounts_by_currency(df_tx_minimal: pd.DataFrame):
         {
             "Original currency": [190.0, 300.0],
             "PLN": [849, 1500],
-            "% (PLN)": [36.1, 63.9],
+            "%": [36.1, 63.9],
         },
         index=[Cur.USD, Cur.EUR],
     )
     assert views.amounts_by_currency(df_tx_minimal).equals(expected)
+
+
+@pytest.mark.parametrize(
+    "period, expected",
+    [
+        (
+            "Y",
+            pd.DataFrame(
+                {"PLN": [450, 1899], "Cumulated PLN": [450, 2349]},
+                index=pd.PeriodIndex(["2021", "2022"], freq="Y"),
+            ),
+        ),
+        (
+            "M",
+            pd.DataFrame(
+                {"PLN": [450, 2175, -276], "Cumulated PLN": [450, 2625, 2349]},
+                index=pd.PeriodIndex(["2021-12", "2022-01", "2022-02"], freq="M"),
+            ),
+        ),
+    ],
+)
+def test_amounts_over_time(
+    df_tx_minimal: pd.DataFrame,
+    period: str,
+    expected: pd.DataFrame,
+):
+    assert views.amount_over_time(df_tx_minimal, period).equals(expected)
