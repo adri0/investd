@@ -21,8 +21,8 @@ import pandas as pd
 import seaborn as sns
 from IPython.display import Markdown, display
 
+from investd import views
 from investd.config import PERSIST_PATH, REF_CURRENCY
-from investd.metrics import invested_ref_amount_by_col, total_invested_ref_currency
 from investd.model import Transaction
 
 sns.set_theme()
@@ -33,7 +33,7 @@ sns.set_theme()
 # %%
 now = datetime.now()
 Markdown(
-f"""
+    f"""
 Generated at: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{REF_CURRENCY}**
 """
 )
@@ -46,37 +46,31 @@ df_tx = df_tx[df_tx["timestamp"] <= now]
 # ### Invested amount
 
 # %%
-Markdown(f"""
-{total_invested_ref_currency(df_tx):.2f} {REF_CURRENCY}
-""")
+Markdown(
+    f"""
+{views.total_invested_ref_currency(df_tx):.2f} {REF_CURRENCY}
+"""
+)
 
 # %% [markdown]
 # ### Invested amount by asset type
 
 # %%
-df = pd.DataFrame(invested_ref_amount_by_col(df_tx, "type"))
-
-df.columns = [REF_CURRENCY]
-df.index.set_names("", inplace=True)
-df = df.applymap(round, ndigits=2)
-df["%"] = round(df[REF_CURRENCY] / df[REF_CURRENCY].sum() * 100, ndigits=1)
+df = views.invested_ref_amount_by_col(df_tx, "type")
 
 display(df)
-fig = df.plot.pie(y="%")
+fig = df.plot.pie(y=str(REF_CURRENCY))
+fig.get_legend().remove()
 
 # %% [markdown]
 # ### Invested amount by currency
 
 # %%
-df = pd.DataFrame(invested_ref_amount_by_col(df_tx, "currency"))
-
-df.columns = [REF_CURRENCY]
-df.index.set_names("", inplace=True)
-df = df.applymap(round, ndigits=2)
-df["%"] = round(df[REF_CURRENCY] / df[REF_CURRENCY].sum() * 100, ndigits=1)
+df = views.amounts_by_currency(df_tx)
 
 display(df)
-fig = df.plot.pie(y="%")
+fig = df.plot.pie(y=str(REF_CURRENCY))
+fig.get_legend().remove()
 
 # %% [markdown]
 # ### Invested amount evolution
@@ -88,6 +82,6 @@ fig.autofmt_xdate()
 cumsum = df_tx["amount_ref_currency"].cumsum()
 df_cum = pd.DataFrame({REF_CURRENCY: cumsum, "Date": df_tx["timestamp"]})
 
-rep = sns.lineplot(x="Date", y=REF_CURRENCY, data=df_cum, ax=ax)
+fig = sns.lineplot(x="Date", y=REF_CURRENCY, data=df_cum, ax=ax)
 
 # %%
