@@ -15,15 +15,15 @@
 
 # %%
 from datetime import datetime
-from turtle import title
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from IPython.display import Markdown
+from dateutil import relativedelta
+from IPython.display import Markdown, display
 
+from investd import views
 from investd.config import PERSIST_PATH, REF_CURRENCY
-from investd.metrics import invested_amount_by_asset_type, total_invested
 from investd.model import Transaction
 
 sns.set_theme()
@@ -33,10 +33,9 @@ sns.set_theme()
 
 # %%
 now = datetime.now()
-
 Markdown(
     f"""
-Generated date: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{REF_CURRENCY.name}**
+Generated at: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{REF_CURRENCY}**
 """
 )
 
@@ -44,30 +43,52 @@ Generated date: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{REF_CURR
 df_tx = Transaction.from_csv(PERSIST_PATH / "tx.csv")
 df_tx = df_tx[df_tx["timestamp"] <= now]
 
+# %% [markdown]
+# ### Invested amount
+
 # %%
 Markdown(
     f"""
-### Net Worth 
-
-{total_invested(df_tx):.2f} {REF_CURRENCY}
+{views.total_invested_ref_currency(df_tx):.2f} {REF_CURRENCY}
 """
 )
 
+# %% [markdown]
+# ### Invested amount by asset type
+
 # %%
-pd.DataFrame(
-    invested_amount_by_asset_type(df_tx).apply(lambda val: f"{val:.2f} {REF_CURRENCY}")
-)
+df = views.invested_ref_amount_by_col(df_tx, "type")
+
+display(df)
+fig = df.plot.pie(y=str(REF_CURRENCY))
+fig.get_legend().remove()
 
 # %% [markdown]
-# ### Portfolio evolution
+# ### Invested amount by currency
+
+# %%
+df = views.amounts_by_currency(df_tx)
+
+display(df)
+fig = df.plot.pie(y=str(REF_CURRENCY))
+fig.get_legend().remove()
+
+# %% [markdown]
+# ### Invested amount over time
+
+# %%
+df = views.amount_over_time(df_tx, period="Y")
+display(df)
+
+# %%
+df = views.amount_over_time(df_tx, period="M").iloc[-12:]
+display(df)
 
 # %%
 fig, ax = plt.subplots()
 fig.autofmt_xdate()
-ax.set_title("Investment Evolution")
 
 cumsum = df_tx["amount_ref_currency"].cumsum()
-df_cum = pd.DataFrame({"Total value": cumsum, "Time": df_tx["timestamp"]})
-sns.lineplot(x="Time", y="Total value", data=df_cum, ax=ax)
+df_cum = pd.DataFrame({REF_CURRENCY: cumsum, "Date": df_tx["timestamp"]})
 
-# %%
+fig = sns.lineplot(x="Date", y=REF_CURRENCY, data=df_cum, ax=ax)
