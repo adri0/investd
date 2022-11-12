@@ -3,8 +3,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from investd.common import Action, AssetType, Currency
 from investd.config import SOURCE_BASE_PATH
-from investd.model import Action, AssetType, Currency
 
 
 @pytest.fixture

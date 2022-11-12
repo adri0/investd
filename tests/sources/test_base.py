@@ -4,8 +4,8 @@ from typing import Iterable
 
 import pandas as pd
 
-from investd.model import Transaction
 from investd.sources.base import SourceBase
+from investd.transactions import Transaction
 
 
 class TestSource(SourceBase):

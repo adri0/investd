@@ -31,12 +31,14 @@ setup(
         "jupyter",
         "jupytext",
         "seaborn",
+        "yfinance",
     ],
     extras_require={
         "dev": [
             "pip",
             "wheel",
             "mypy",
+            "types-python-dateutil",
             "pytest",
             "pytest-cov",
             "pytest-dotenv",

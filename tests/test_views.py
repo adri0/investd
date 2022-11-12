@@ -5,8 +5,8 @@ import pandas as pd
 import pytest
 
 from investd import views
-from investd.model import AssetType as Asset
-from investd.model import Currency as Cur
+from investd.common import AssetType as Asset
+from investd.common import Currency as Cur
 
 
 def test_total_invested_amount(df_tx_minimal: pd.DataFrame):

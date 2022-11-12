@@ -2,9 +2,8 @@ from typing import Type
 
 import pandas as pd
 
-from investd.model import Transaction
-from investd.sources.base import SourceBase
-
+from ..sources.base import SourceBase
+from ..transactions import Transaction
 from . import revolut_stocks, xtb
 
 sources: list[Type[SourceBase]] = [xtb.XTB, revolut_stocks.RevolutStocks]

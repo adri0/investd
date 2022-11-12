@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from .model import Currency
+from .common import Currency
 
 log = logging.getLogger(__name__)
 
