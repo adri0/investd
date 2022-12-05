@@ -5,9 +5,9 @@ import pandas as pd
 from investd.model import Transaction
 from investd.sources.base import SourceBase
 
-from . import revolut_stocks, xtb
+from . import revolut_stocks, xtb, bonds
 
-sources: list[Type[SourceBase]] = [xtb.XTB, revolut_stocks.RevolutStocks]
+sources: list[Type[SourceBase]] = [xtb.XTB, revolut_stocks.RevolutStocks, bonds.Bonds]
 
 
 def ingest_sources_as_df() -> pd.DataFrame:

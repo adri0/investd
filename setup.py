@@ -31,6 +31,7 @@ setup(
         "jupyter",
         "jupytext",
         "seaborn",
+        "xlrd",
     ],
     extras_require={
         "dev": [

@@ -21,6 +21,7 @@ class AssetType(Enum):
     Stock = "Stock"
     Crypto = "Crypto"
     FX = "FX"
+    Bond = "Bond"
 
     def __str__(self) -> str:
         return self.name
