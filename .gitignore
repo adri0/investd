@@ -25,6 +25,7 @@ MANIFEST
 
 # IDE
 .vscode
+.idea
 
 # Python notebooks
 **.ipynb
