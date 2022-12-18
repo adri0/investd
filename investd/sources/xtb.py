@@ -43,10 +43,13 @@ class XTB(SourceBase):
     @staticmethod
     def parse_comment(comment: str) -> tuple[str, float, float]:
         for match in re.finditer(
-            r"(?P<action>BUY|SELL) (?P<quantity>[\d.]+)(/\d+)? @ (?P<price>[\d.]+)", comment
+            r"(?P<action>BUY|SELL) (?P<quantity>[\d.]+)(/\d+)? @ (?P<price>[\d.]+)",
+            comment,
         ):
             return match["action"], float(match["quantity"]), float(match["price"])
-        raise ValueError(f"No matches found for comment pattern in Comment: '{comment}'")
+        raise ValueError(
+            f"No matches found for comment pattern in Comment: '{comment}'"
+        )
 
     @staticmethod
     def infer_currency_from_symbol(symbol: str) -> Currency:
