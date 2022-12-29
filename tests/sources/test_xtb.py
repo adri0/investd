@@ -11,7 +11,7 @@ def test_parse_xtb(path_xtb_xlsx):
     xtb_source = XTB()
     txs = list(xtb_source.parse_source_file(path_xtb_xlsx))
     tx: Transaction = txs[1]
-    assert len(txs) == 14
+    assert len(txs) == 17
     assert tx.id == "202210996"
     assert tx.symbol == "V80A.DE"
     assert tx.timestamp == datetime(2022, 5, 2, 14, 30, 0)

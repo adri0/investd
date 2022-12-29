@@ -32,6 +32,7 @@ setup(
         "jupytext",
         "seaborn",
         "yfinance",
+        "xlrd",
     ],
     extras_require={
         "dev": [
