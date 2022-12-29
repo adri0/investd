@@ -35,6 +35,11 @@ def path_bonds_xls() -> Path:
 
 
 @pytest.fixture
+def path_bossa_csv() -> Path:
+    return SOURCE_BASE_PATH / "bossa/bossa-statement.csv"
+
+
+@pytest.fixture
 def df_tx_minimal() -> pd.DataFrame:
     df_tx = pd.DataFrame(
         {
