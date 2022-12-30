@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Iterable
 
 from ..common import Action, AssetType, Currency
-from ..transactions import Transaction
+from ..transaction import Transaction
 from .base import SourceBase
 
 

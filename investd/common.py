@@ -1,6 +1,5 @@
 from datetime import datetime
 from enum import Enum
-from os import PathLike
 
 from pydantic.dataclasses import dataclass
 

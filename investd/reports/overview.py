@@ -24,7 +24,7 @@ from IPython.display import Markdown, display
 
 from investd import views
 from investd.config import PERSIST_PATH, REF_CURRENCY
-from investd.transactions import load_transactions
+from investd.transaction import load_transactions
 
 sns.set_theme()
 

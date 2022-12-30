@@ -5,7 +5,7 @@ from typing import Iterator
 import pandas as pd
 
 from ..common import Action, AssetType, Currency
-from ..transactions import Transaction
+from ..transaction import Transaction
 from .base import SourceBase
 
 

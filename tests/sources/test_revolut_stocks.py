@@ -4,7 +4,7 @@ from pytest import approx
 
 from investd.common import Action, AssetType, Currency
 from investd.sources.revolut_stocks import RevolutStocks
-from investd.transactions import Transaction
+from investd.transaction import Transaction
 
 
 def test_parse_revolut_stocks(path_revolut_csv):

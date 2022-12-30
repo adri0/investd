@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Generator, Iterable
 
 from ..config import SOURCE_BASE_PATH
-from ..transactions import Transaction
+from ..transaction import Transaction
 
 log = logging.getLogger(__name__)
 

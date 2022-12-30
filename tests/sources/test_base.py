@@ -5,7 +5,7 @@ from typing import Iterable
 import pandas as pd
 
 from investd.sources.base import SourceBase
-from investd.transactions import Transaction
+from investd.transaction import Transaction
 
 
 class TestSource(SourceBase):

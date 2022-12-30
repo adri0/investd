@@ -4,7 +4,7 @@ from pytest import approx
 
 from investd.common import Action, AssetType, Currency
 from investd.sources.xtb import XTB
-from investd.transactions import Transaction
+from investd.transaction import Transaction
 
 
 def test_parse_xtb(path_xtb_xlsx):
