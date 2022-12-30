@@ -30,6 +30,11 @@ def path_xtb_xlsx() -> Path:
 
 
 @pytest.fixture
+def path_xtb_csv() -> Path:
+    return SOURCE_BASE_PATH / "xtb/xtb-statement.csv"
+
+
+@pytest.fixture
 def path_bonds_xls() -> Path:
     return SOURCE_BASE_PATH / "bonds/bonds-statement.xls"
 
