@@ -8,36 +8,52 @@ from ..common import Action, AssetType, Currency
 from ..transaction import Transaction
 from .base import SourceBase
 
+COL_AMOUNT = "Amount"
+COL_COMMENT = "Comment"
+COL_ID = "ID"
+COL_SYMBOL = "Symbol"
+COL_TIME = "Time"
+COL_TYPE = "Type"
+
+INPUT_COLUMNS = [COL_AMOUNT, COL_COMMENT, COL_ID, COL_SYMBOL, COL_TIME, COL_TYPE]
+
 
 class XTB(SourceBase):
-
     source_name = "xtb"
 
     def parse_source_file(self, path: Path) -> Iterator[Transaction]:
-        df = pd.read_excel(
-            path,
-            sheet_name="CASH OPERATION HISTORY",
-            skiprows=10,
-            usecols=["ID", "Type", "Time", "Comment", "Symbol", "Amount"],
-            parse_dates=["Time"],
-        )
-        df = df[~pd.isna(df["Symbol"])]
+        if path.suffix == ".xlsx":
+            df = pd.read_excel(
+                path,
+                sheet_name="CASH OPERATION HISTORY",
+                skiprows=10,
+                usecols=INPUT_COLUMNS,
+                parse_dates=[COL_TIME],
+            )
+        elif path.suffix == ".csv":
+            df = pd.read_csv(
+                path, usecols=INPUT_COLUMNS, parse_dates=[COL_TIME], sep=";"
+            )
+        else:
+            return []
+
+        df = df[~pd.isna(df[COL_SYMBOL])]
         return map(lambda i_row: self._convert(i_row[1]), df.iterrows())
 
     def _convert(self, record: pd.Series) -> Transaction:
-        action, quantity, price = XTB.parse_comment(record["Comment"])
+        action, quantity, price = XTB.parse_comment(record[COL_COMMENT])
         return Transaction(
-            id=record["ID"],
-            timestamp=record["Time"],
-            symbol=record["Symbol"],
+            id=record[COL_ID],
+            timestamp=record[COL_TIME],
+            symbol=record[COL_SYMBOL],
             type=AssetType.ETF,
             platform=self.source_name,
-            currency=XTB.infer_currency_from_symbol(record["Symbol"]),
+            currency=XTB.infer_currency_from_symbol(record[COL_SYMBOL]),
             amount=price * quantity,
             quantity=quantity,
             price=price,
-            exchange_rate=abs(record["Amount"]) / price / quantity,
-            amount_ref_currency=abs(record["Amount"]),
+            exchange_rate=abs(record[COL_AMOUNT]) / price / quantity,
+            amount_ref_currency=abs(record[COL_AMOUNT]),
             action=Action(action.upper()),
         )
 
