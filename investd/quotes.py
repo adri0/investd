@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Iterable
+from typing import Iterable, Optional
 
 import pandas as pd
 import yfinance
@@ -25,14 +25,20 @@ def fetch_quotes(
         " ".join(map(adjust_symbol, symbols)),
         start=from_date,
         end=until_date,
-        groupby="ticker",
+        group_by="ticker",
     )
 
 
-def generate_quotes_csv() -> None:
+def generate_quotes_csv(end_date: Optional[date] = None) -> None:
     df_tx = load_transactions()
     symbols = df_tx["symbol"].unique()
     earliest_transaction = df_tx["timestamp"].min()
-    today = date.today()
-    df_quotes = fetch_quotes(symbols, earliest_transaction, today)
+    until = end_date or date.today()
+    df_quotes = fetch_quotes(symbols, earliest_transaction, until)
     df_quotes.to_csv(PERSIST_PATH / "quotes.csv")
+
+
+def load_quotes() -> pd.DataFrame:
+    df_quotes = pd.read_csv(PERSIST_PATH / "quotes.csv", header=[0, 1, 2], index_col=0)
+    df_quotes.index = df_quotes.index.map(lambda dt: pd.to_datetime(dt).date())
+    return df_quotes

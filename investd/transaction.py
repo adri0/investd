@@ -26,21 +26,16 @@ class Transaction:
     action: Action
 
 
-def to_pandas_schema(data_class: type) -> dict[str, Any]:
-    def to_pandas_dtype(field: Field) -> Any:
-        if field.type is datetime:
-            return "datetime64[ns]"
-        if issubclass(field.type, Enum):
-            return pd.CategoricalDtype(field.type.__members__.values())
-        return field.type
-
-    return {
-        field.name: to_pandas_dtype(field)
-        for field in data_class.__dataclass_fields__.values()  # type: ignore
-    }
+def load_transactions() -> pd.DataFrame:
+    """Load transactions in persistence as a DataFrame."""
+    path = PERSIST_PATH / "tx.csv"
+    df_tx = pd.read_csv(path, converters=_enum_fields(Transaction))
+    schema = _to_pandas_schema(Transaction)
+    return df_tx.astype(schema)
 
 
-def categorical_fields(data_class: type) -> dict[str, type[Enum]]:
+def _enum_fields(data_class: type) -> dict[str, type[Enum]]:
+    """Return a dict of enum fields in a dataclass."""
     return {
         field.name: field.type
         for field in data_class.__dataclass_fields__.values()  # type: ignore
@@ -48,9 +43,18 @@ def categorical_fields(data_class: type) -> dict[str, type[Enum]]:
     }
 
 
-def load_transactions() -> pd.DataFrame:
-    path = PERSIST_PATH / "tx.csv"
-    df_tx = pd.read_csv(path, converters=categorical_fields(Transaction))
-    schema = to_pandas_schema(Transaction)
-    df_tx = df_tx.astype(schema)
-    return df_tx
+def _to_pandas_schema(data_class: type) -> dict[str, type | str]:
+    """Convert a dataclass to a pandas dtype schema."""
+
+    def to_pandas_dtype(field: Field) -> Any:
+        if field.type is datetime:
+            return "datetime64[ns]"
+        elif issubclass(field.type, Enum):
+            return pd.CategoricalDtype(field.type.__members__.values())
+        else:
+            return field.type
+
+    return {
+        field.name: to_pandas_dtype(field)
+        for field in data_class.__dataclass_fields__.values()  # type: ignore
+    }
