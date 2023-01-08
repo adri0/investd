@@ -31,13 +31,17 @@ def fetch_quotes(
 
 
 def generate_quotes_csv(
-    output_path: Optional[Path] = None, end_date: Optional[date] = None
+    output_path: Optional[Path] = None,
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None,
+    symbols: Optional[Iterable[str]] = [],
 ) -> None:
     df_tx = load_transactions()
-    symbols = df_tx["symbol"].unique()
-    earliest_transaction = df_tx["timestamp"].min().date()
-    until = end_date or date.today()
-    df_quotes = fetch_quotes(symbols, earliest_transaction, until)
+    df_quotes = fetch_quotes(
+        symbols=symbols or df_tx["symbol"].unique(),
+        from_date=start_date or df_tx["timestamp"].min().date(),
+        until_date=end_date or date.today(),
+    )
     df_quotes.to_csv(output_path or PERSIST_PATH / "quotes.csv")
 
 

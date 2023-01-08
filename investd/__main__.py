@@ -1,12 +1,14 @@
 import logging
+from datetime import date
 from pathlib import Path
+from typing import Optional
 
 import click
 
-from . import reports
-from .config import PERSIST_PATH
-from .quotes import generate_quotes_csv
-from .sources import ingest_sources_as_df
+from investd import reports
+from investd.config import PERSIST_PATH
+from investd.quotes import generate_quotes_csv
+from investd.sources import ingest_sources_as_df
 
 app_name = "investd"
 log = logging.getLogger(app_name)
@@ -49,9 +51,21 @@ def report_cmd(report: str, ingest: bool):
     log.info(f"Report created: {path_output}")
 
 
-@cli.command(name="download-quotes")
-def quotes_cmd():
-    generate_quotes_csv()
+@cli.command(
+    name="download-quotes",
+    help="Download quotes using Yahoo finance API. If start date, symbols not "
+    "provided it will look for all symbols in the persisted transactions, "
+    "using the earliest transaction as start date and current dateas end date.",
+)
+@click.option("--start", "-s", default=None, help="Starting date in format YYYY-MM-DD")
+@click.option("--end", "-e", default=None, help="End date in format YYYY-MM-DD")
+@click.option("--symbols", "-y", default=None, help="Symbols e.g. AAPL,CDR.PL")
+def quotes_cmd(start: Optional[str], end: Optional[str], symbols: Optional[str]):
+    generate_quotes_csv(
+        start_date=date.fromisoformat(start) if start else None,
+        end_date=date.fromisoformat(end) if end else None,
+        symbols=symbols.split(",") if symbols else None,
+    )
 
 
 if __name__ == "__main__":
