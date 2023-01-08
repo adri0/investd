@@ -2,7 +2,7 @@ name: Deploy sample report to Github Pages
 
 on:
   push:
-    branches: ["main", "41-publish-sample-report"]
+    branches: ["main"]
 
   workflow_dispatch:
 
