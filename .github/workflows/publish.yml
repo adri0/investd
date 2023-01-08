@@ -1,5 +1,3 @@
-#  
-
 name: Deploy sample report to Github Pages
 
 on:
@@ -42,9 +40,11 @@ jobs:
 
       - name: Generate sample report
         run: |
-          echo Generate overview report using .env.template variables
+          echo "Generate overview report using .env.template variables"
           export $(grep -v '^#' .template.env | xargs)
-          python -m investd report
+          report_path=$(python -m investd report)
+          echo "Rename report file to index.html"
+          mv $report_path "$(dirname $report_path)/index.html"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
