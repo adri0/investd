@@ -3,7 +3,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
-from ..model import Action, AssetType, Currency, Transaction
+from ..common import Action, AssetType, Currency
+from ..transaction import Transaction
 from .base import SourceBase
 
 COL_AMOUNT = "wartość"

@@ -8,6 +8,12 @@ def test_load_transactions():
     df_tx = load_transactions()
     assert df_tx.shape == (19, 12)
     assert df_tx["type"].dtype == pd.CategoricalDtype(
-        categories=[AssetType.Stock, AssetType.ETF, AssetType.Crypto, AssetType.FX]
+        categories=[
+            AssetType.Stock,
+            AssetType.ETF,
+            AssetType.Crypto,
+            AssetType.FX,
+            AssetType.Bond,
+        ]
     )
     assert df_tx["timestamp"].dtype == "datetime64[ns]"

@@ -3,7 +3,8 @@ from typing import Iterator
 
 import pandas as pd
 
-from ..model import Action, AssetType, Currency, Transaction
+from ..common import Action, AssetType, Currency
+from ..transaction import Transaction
 from .base import SourceBase
 
 BOND_VALUE = 100

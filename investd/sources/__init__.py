@@ -2,8 +2,8 @@ from typing import Type
 
 import pandas as pd
 
-from investd.model import Transaction
 from investd.sources.base import SourceBase
+from investd.transaction import Transaction
 
 from . import bonds, bossa, revolut_stocks, xtb
 
