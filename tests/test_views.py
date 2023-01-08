@@ -1,4 +1,3 @@
-from datetime import date
 from typing import Any, Iterable
 
 import pandas as pd

@@ -48,4 +48,6 @@ def generate_quotes_csv(
 def load_quotes() -> pd.DataFrame:
     df_quotes = pd.read_csv(PERSIST_PATH / "quotes.csv", header=[0, 1, 2], index_col=0)
     df_quotes.index = df_quotes.index.map(lambda dt: pd.to_datetime(dt).date())
+    df_quotes.sort_index(inplace=True, axis=0)
+    df_quotes.sort_index(inplace=True, axis=1)
     return df_quotes

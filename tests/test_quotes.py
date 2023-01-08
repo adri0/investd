@@ -5,7 +5,6 @@ import pandas as pd
 import yfinance
 from pytest import MonkeyPatch, approx
 
-from investd.config import PERSIST_PATH
 from investd.quotes import adjust_symbol, generate_quotes_csv, load_quotes
 
 
