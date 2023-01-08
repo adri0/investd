@@ -1,4 +1,5 @@
 from datetime import date
+from pathlib import Path
 from typing import Iterable, Optional
 
 import pandas as pd
@@ -22,20 +23,22 @@ def fetch_quotes(
     symbols: Iterable[str], from_date: date, until_date: date
 ) -> pd.DataFrame:
     return yfinance.download(
-        " ".join(map(adjust_symbol, symbols)),
+        tickers=" ".join(map(adjust_symbol, symbols)),
         start=from_date,
         end=until_date,
         group_by="ticker",
     )
 
 
-def generate_quotes_csv(end_date: Optional[date] = None) -> None:
+def generate_quotes_csv(
+    output_path: Optional[Path] = None, end_date: Optional[date] = None
+) -> None:
     df_tx = load_transactions()
     symbols = df_tx["symbol"].unique()
-    earliest_transaction = df_tx["timestamp"].min()
+    earliest_transaction = df_tx["timestamp"].min().date()
     until = end_date or date.today()
     df_quotes = fetch_quotes(symbols, earliest_transaction, until)
-    df_quotes.to_csv(PERSIST_PATH / "quotes.csv")
+    df_quotes.to_csv(output_path or PERSIST_PATH / "quotes.csv")
 
 
 def load_quotes() -> pd.DataFrame:

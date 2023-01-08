@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 import yfinance
-from pytest import approx
+from pytest import MonkeyPatch, approx
 
 from investd.config import PERSIST_PATH
 from investd.quotes import adjust_symbol, generate_quotes_csv, load_quotes
@@ -16,17 +16,29 @@ def test_adjust_symbol():
     assert adjust_symbol("CSPX.UK") == "CSPX.L"
 
 
-def test_generate_quotes_csv(monkeypatch, df_quotes: pd.DataFrame):
-    assert not Path(PERSIST_PATH / "quotes.csv").exists()
+def test_generate_quotes_csv(
+    monkeypatch: MonkeyPatch, df_quotes: pd.DataFrame, tmp_path: Path
+):
+    output_path = tmp_path / "quotes.csv"
+    assert not output_path.exists()
 
-    def mock_download(*args, **kwargs):
+    yfinance_download_call_args = {}
+
+    def mock_yfinance_download(*args, **kwargs):
+        yfinance_download_call_args.update(kwargs)
         return df_quotes
 
-    monkeypatch.setattr(yfinance, "download", mock_download)
-    generate_quotes_csv(end_date=date(2022, 12, 30))
+    monkeypatch.setattr(yfinance, "download", mock_yfinance_download)
+    generate_quotes_csv(output_path, end_date=date(2022, 12, 30))
 
-    df_quotes = pd.read_csv(PERSIST_PATH / "quotes.csv")
+    df_quotes = pd.read_csv(output_path)
     assert df_quotes.shape == (259, 50)
+    assert yfinance_download_call_args == {
+        "tickers": "AAPL TSLA CDR.WA AMZN GOOGL DAXEX.DE V80A.DE CSPX.L",
+        "start": date(2022, 1, 2),
+        "end": date(2022, 12, 30),
+        "group_by": "ticker",
+    }
 
 
 def test_load_quotes():

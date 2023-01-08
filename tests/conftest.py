@@ -73,8 +73,4 @@ def df_tx_minimal() -> pd.DataFrame:
 
 @pytest.fixture
 def df_quotes() -> pd.DataFrame:
-    path_quotes = PERSIST_PATH / "quotes.csv"
-    path_temp_quotes = PERSIST_PATH / "_tmp_quotes.csv"
-    os.rename(path_quotes, path_temp_quotes)
-    yield pd.read_csv(path_temp_quotes)
-    os.rename(path_temp_quotes, path_quotes)
+    return pd.read_csv(PERSIST_PATH / "quotes.csv")
