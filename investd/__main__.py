@@ -49,6 +49,7 @@ def report_cmd(report: str, ingest: bool):
         df_tx.to_csv(PERSIST_PATH / "tx.csv", index=False)
     path_output = reports.generate_report(report)
     log.info(f"Report created: {path_output}")
+    print(path_output)
 
 
 @cli.command(
