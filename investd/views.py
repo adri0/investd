@@ -9,8 +9,8 @@ from typing import Any, Iterable, Optional
 
 import pandas as pd
 
+from .common import Action
 from .config import REF_CURRENCY
-from .model import Action
 
 
 def _add_signed_cols(df_tx: pd.DataFrame) -> pd.DataFrame:

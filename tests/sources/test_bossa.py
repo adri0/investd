@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from investd.model import Action, AssetType, Currency, Transaction
+from investd.common import Action, AssetType, Currency
 from investd.sources.bossa import Bossa
+from investd.transaction import Transaction
 
 
 def test_parse_bossa(path_bossa_csv):

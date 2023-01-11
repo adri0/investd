@@ -2,8 +2,9 @@ from datetime import datetime
 
 from pytest import approx
 
-from investd.model import Action, AssetType, Currency, Transaction
+from investd.common import Action, AssetType, Currency
 from investd.sources.bonds import Bonds
+from investd.transaction import Transaction
 
 
 def test_parse_bonds(path_bonds_xls):

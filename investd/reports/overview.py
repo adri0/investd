@@ -24,7 +24,7 @@ from IPython.display import Markdown, display
 
 from investd import views
 from investd.config import PERSIST_PATH, REF_CURRENCY
-from investd.model import Transaction
+from investd.transaction import load_transactions
 
 sns.set_theme()
 
@@ -40,7 +40,7 @@ Generated at: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{REF_CURREN
 )
 
 # %%
-df_tx = Transaction.from_csv(PERSIST_PATH / "tx.csv")
+df_tx = load_transactions()
 df_tx = df_tx[df_tx["timestamp"] <= now]
 
 # %% [markdown]

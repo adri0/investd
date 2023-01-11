@@ -31,6 +31,7 @@ setup(
         "jupyter",
         "jupytext",
         "seaborn",
+        "yfinance",
         "xlrd",
     ],
     extras_require={
@@ -38,6 +39,7 @@ setup(
             "pip",
             "wheel",
             "mypy",
+            "types-python-dateutil",
             "pytest",
             "pytest-cov",
             "pytest-dotenv",

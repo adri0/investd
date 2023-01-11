@@ -1,11 +1,10 @@
-import datetime
 from pathlib import Path
 from typing import Iterable
 
 import pandas as pd
 
-from investd.model import Transaction
 from investd.sources.base import SourceBase
+from investd.transaction import Transaction
 
 
 class TestSource(SourceBase):

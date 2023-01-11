@@ -1,10 +1,12 @@
+import io
+import os
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
-from investd.config import SOURCE_BASE_PATH
-from investd.model import Action, AssetType, Currency
+from investd.common import Action, AssetType, Currency
+from investd.config import PERSIST_PATH, SOURCE_BASE_PATH
 
 
 @pytest.fixture
@@ -67,3 +69,8 @@ def df_tx_minimal() -> pd.DataFrame:
         df_tx[cat] = df_tx[cat].astype("category")
     df_tx["timestamp"] = df_tx["timestamp"].astype("datetime64")
     return df_tx
+
+
+@pytest.fixture
+def df_quotes() -> pd.DataFrame:
+    return pd.read_csv(PERSIST_PATH / "quotes.csv")
