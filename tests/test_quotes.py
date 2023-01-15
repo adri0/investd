@@ -5,7 +5,7 @@ import pandas as pd
 import yfinance
 from pytest import MonkeyPatch, approx
 
-from investd.quotes import adjust_symbol, generate_quotes_csv, load_quotes
+from investd.quotes import adjust_symbol, download_quotes_to_csv, load_quotes
 
 
 def test_adjust_symbol():
@@ -15,7 +15,7 @@ def test_adjust_symbol():
     assert adjust_symbol("CSPX.UK") == "CSPX.L"
 
 
-def test_generate_quotes_csv(
+def test_download_quotes_csv(
     monkeypatch: MonkeyPatch, df_quotes: pd.DataFrame, tmp_path: Path
 ):
     output_path = tmp_path / "quotes.csv"
@@ -28,7 +28,7 @@ def test_generate_quotes_csv(
         return df_quotes
 
     monkeypatch.setattr(yfinance, "download", mock_yfinance_download)
-    generate_quotes_csv(output_path, end_date=date(2022, 12, 30))
+    download_quotes_to_csv(output_path, end_date=date(2022, 12, 30))
 
     df_quotes = pd.read_csv(output_path)
     assert df_quotes.shape == (259, 50)

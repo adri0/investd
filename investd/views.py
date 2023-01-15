@@ -10,7 +10,7 @@ from typing import Any, Iterable, Optional
 import pandas as pd
 
 from .common import Action
-from .config import REF_CURRENCY
+from .config import INVESTD_REF_CURRENCY
 
 
 def _add_signed_cols(df_tx: pd.DataFrame) -> pd.DataFrame:
@@ -62,8 +62,8 @@ def invested_ref_amount_by_col(df_tx: pd.DataFrame, col: str) -> pd.Series:
     """
     df_tx = _add_signed_cols(df_tx)
     grouped = df_tx.groupby(col)["amount_ref_currency_signed"].sum()
-    df = to_nice_df(grouped, columns=[str(REF_CURRENCY)])
-    df = add_pct_col(df, based_on_col=str(REF_CURRENCY))
+    df = to_nice_df(grouped, columns=[str(INVESTD_REF_CURRENCY)])
+    df = add_pct_col(df, based_on_col=str(INVESTD_REF_CURRENCY))
     return df
 
 
@@ -76,8 +76,10 @@ def amounts_by_currency(df_tx: pd.DataFrame) -> pd.Series:
     df_cur = df_tx.groupby("currency")[
         ["amount_signed", "amount_ref_currency_signed"]
     ].sum()
-    df_cur = to_nice_df(df_cur, columns=["Original currency", str(REF_CURRENCY)])
-    df_cur = add_pct_col(df_cur, str(REF_CURRENCY))
+    df_cur = to_nice_df(
+        df_cur, columns=["Original currency", str(INVESTD_REF_CURRENCY)]
+    )
+    df_cur = add_pct_col(df_cur, str(INVESTD_REF_CURRENCY))
     return df_cur
 
 
@@ -104,5 +106,7 @@ def amount_over_time(df_tx: pd.DataFrame, period: str) -> pd.DataFrame:
     )
     df_ot.index = df_ot.index.to_period()
     df_ot["cumsum"] = df_ot["amount_ref_currency_signed"].cumsum()
-    df_ot = to_nice_df(df_ot, columns=[str(REF_CURRENCY), f"Cumulated {REF_CURRENCY}"])
+    df_ot = to_nice_df(
+        df_ot, columns=[str(INVESTD_REF_CURRENCY), f"Cumulated {INVESTD_REF_CURRENCY}"]
+    )
     return df_ot

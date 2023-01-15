@@ -11,14 +11,15 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from .common import Currency
+from investd.common import Currency
 
 log = logging.getLogger(__name__)
 
-SOURCE_BASE_PATH = Path(os.getenv("SOURCE_BASE_PATH", "data/source"))
-PERSIST_PATH = Path(os.getenv("PERSIST_PATH", "data/persist"))
-REPORTS_PATH = Path(os.getenv("REPORTS_PATH", "data/reports"))
-REF_CURRENCY = Currency(os.getenv("REF_CURRENCY", "USD"))
+INVESTD_DATA = Path(os.getenv("INVESTD_DATA", "investd_data"))
+INVESTD_SOURCES = Path(os.getenv("INVESTD_SOURCES", f"{INVESTD_DATA}/sources"))
+INVESTD_PERSIST = Path(os.getenv("INVESTD_PERSIST", f"{INVESTD_DATA}/persist"))
+INVESTD_REPORTS = Path(os.getenv("INVESTD_REPORTS", f"{INVESTD_DATA}/reports"))
+INVESTD_REF_CURRENCY = Currency(os.getenv("INVESTD_REF_CURRENCY", "USD"))
 
 
 def get_config_variables() -> dict[str, Any]:
@@ -30,10 +31,17 @@ def get_config_variables() -> dict[str, Any]:
     }
 
 
-log.info(
-    " - ".join([f"{name}: {value}" for name, value in get_config_variables().items()])
-)
-
-for conf_path in (SOURCE_BASE_PATH, PERSIST_PATH, REPORTS_PATH):
-    if not conf_path.exists():
-        os.makedirs(conf_path)
+def init_dirs() -> None:
+    """
+    Check if data dirs exist, create them otherwise.
+    """
+    config_vars = get_config_variables().items()
+    log.info(", ".join(f"{name}: {value}" for name, value in config_vars))
+    if not INVESTD_DATA.exists():
+        print(
+            f"INVESTD_DATA directory ({INVESTD_DATA}) doesn't exist. "
+            "Let me create it for you."
+        )
+    for conf_path in (INVESTD_SOURCES, INVESTD_PERSIST, INVESTD_REPORTS):
+        if not conf_path.exists():
+            os.makedirs(conf_path)
