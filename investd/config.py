@@ -16,9 +16,9 @@ from investd.common import Currency
 log = logging.getLogger(__name__)
 
 INVESTD_DATA = Path(os.getenv("INVESTD_DATA", "investd_data"))
-INVESTD_SOURCES = Path(os.getenv("INVESTD_SOURCES", f"{INVESTD_DATA}/sources"))
-INVESTD_PERSIST = Path(os.getenv("INVESTD_PERSIST", f"{INVESTD_DATA}/persist"))
-INVESTD_REPORTS = Path(os.getenv("INVESTD_REPORTS", f"{INVESTD_DATA}/reports"))
+INVESTD_SOURCES = Path(os.getenv("INVESTD_SOURCES", INVESTD_DATA / "sources"))
+INVESTD_PERSIST = Path(os.getenv("INVESTD_PERSIST", INVESTD_DATA / "persist"))
+INVESTD_REPORTS = Path(os.getenv("INVESTD_REPORTS", INVESTD_DATA / "reports"))
 INVESTD_REF_CURRENCY = Currency(os.getenv("INVESTD_REF_CURRENCY", "USD"))
 
 

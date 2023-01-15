@@ -13,7 +13,7 @@ from investd.quotes import (
 )
 
 
-def test_adjust_symbol():
+def test_adjust_symbol() -> None:
     assert adjust_symbol("AAPL") == "AAPL"
     assert adjust_symbol("BETASPXP.PL") == "BETASPXP.WA"
     assert adjust_symbol("INR.FR") == "INR.PA"
@@ -22,7 +22,7 @@ def test_adjust_symbol():
 
 def test_download_quotes_csv(
     monkeypatch: MonkeyPatch, df_quotes: pd.DataFrame, tmp_path: Path
-):
+) -> None:
     output_path = tmp_path / QUOTES_FILENAME
     assert not output_path.exists()
 
@@ -45,7 +45,7 @@ def test_download_quotes_csv(
     }
 
 
-def test_load_quotes():
+def test_load_quotes() -> None:
     df_quotes = load_quotes()
     assert df_quotes.shape == (257, 48)
     assert df_quotes.loc[date(2022, 12, 29), ("AMZN", "Close")][0] == approx(84.18)
