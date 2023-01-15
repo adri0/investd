@@ -1,12 +1,12 @@
-import io
-import os
 from pathlib import Path
+from typing import Generator
 
 import pandas as pd
 import pytest
 
 from investd.common import Action, AssetType, Currency
-from investd.config import INVESTD_PERSIST, INVESTD_SOURCES
+from investd.config import INVESTD_PERSIST, INVESTD_REPORTS, INVESTD_SOURCES
+from investd.quotes import QUOTES_FILENAME
 
 
 @pytest.fixture
@@ -15,9 +15,10 @@ def path_resources() -> Path:
 
 
 @pytest.fixture
-def cleanup_reports(path_resources):
+def setup_reports() -> Generator[None, None, None]:
+    INVESTD_REPORTS.mkdir(exist_ok=True)
     yield
-    for path in (path_resources / "data/reports").glob("*.html"):
+    for path in INVESTD_REPORTS.glob("*.html"):
         path.unlink()
 
 
@@ -73,4 +74,4 @@ def df_tx_minimal() -> pd.DataFrame:
 
 @pytest.fixture
 def df_quotes() -> pd.DataFrame:
-    return pd.read_csv(INVESTD_PERSIST / "quotes.csv")
+    return pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME)

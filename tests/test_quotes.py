@@ -5,7 +5,12 @@ import pandas as pd
 import yfinance
 from pytest import MonkeyPatch, approx
 
-from investd.quotes import adjust_symbol, download_quotes_to_csv, load_quotes
+from investd.quotes import (
+    QUOTES_FILENAME,
+    adjust_symbol,
+    download_quotes_to_csv,
+    load_quotes,
+)
 
 
 def test_adjust_symbol():
@@ -18,7 +23,7 @@ def test_adjust_symbol():
 def test_download_quotes_csv(
     monkeypatch: MonkeyPatch, df_quotes: pd.DataFrame, tmp_path: Path
 ):
-    output_path = tmp_path / "quotes.csv"
+    output_path = tmp_path / QUOTES_FILENAME
     assert not output_path.exists()
 
     yfinance_download_call_args = {}
