@@ -1,0 +1,12 @@
+PyYAML
+click
+ipython
+jupyter
+jupytext
+openpyxl
+pandas
+pydantic
+python-dotenv
+seaborn
+xlrd
+yfinance

@@ -3,9 +3,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
-from ..common import Action, AssetType, Currency
-from ..transaction import Transaction
-from .base import SourceBase
+from investd.common import Action, AssetType, Currency
+from investd.sources.base import SourceBase
+from investd.transaction import Transaction
 
 COL_AMOUNT = "wartość"
 COL_CURRENCY = "waluta"

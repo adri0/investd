@@ -1,7 +1,10 @@
 from setuptools import find_packages, setup
 
-with open("README.md") as f:
-    long_description = f.read()
+
+def read_contents(path: str) -> str:
+    with open(path, "r") as file:
+        return file.read()
+
 
 setup(
     name="investd",
@@ -9,44 +12,23 @@ setup(
     author="adri0",
     author_email="",
     url="",
-    long_description=long_description,
+    long_description=read_contents("README.md"),
     long_description_content_type="text/markdown",
     license="",
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Topic :: Office/Business :: Financial :: Investment",
     ],
-    packages=find_packages(exclude=["tests"]),
+    packages=find_packages(exclude=["tests", "sample_data"]),
     namespace_packages=[],
     include_package_data=False,
     zip_safe=False,
-    install_requires=[
-        "pandas",
-        "openpyxl",
-        "pydantic",
-        "PyYAML",
-        "click",
-        "python-dotenv",
-        "ipython",
-        "jupyter",
-        "jupytext",
-        "seaborn",
-        "yfinance",
-        "xlrd",
-    ],
+    install_requires=read_contents("requirements-latest.txt").strip().split(),
     extras_require={
-        "dev": [
-            "pip",
-            "wheel",
-            "mypy",
-            "types-python-dateutil",
-            "pytest",
-            "pytest-cov",
-            "pytest-dotenv",
-            "isort",
-            "black",
-        ],
+        "dev": read_contents("requirements-dev.txt").strip().split(),
     },
-    entry_points={"investd.__main__": {"main = investd.__main__:cli"}},
+    entry_points={"console_scripts": ["investd = investd.__main__:cli"]},
     tests_require=["pytest", "pytest-cov", "pytest-dotenv"],
 )

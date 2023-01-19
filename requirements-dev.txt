@@ -1,0 +1,9 @@
+black
+isort
+mypy
+pip
+pytest
+pytest-cov
+pytest-dotenv
+types-python-dateutil
+wheel

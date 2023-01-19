@@ -5,27 +5,37 @@ from typing import Optional
 
 import click
 
-from investd import reports
-from investd.config import PERSIST_PATH
-from investd.quotes import generate_quotes_csv
-from investd.sources import ingest_sources_as_df
+from investd import quotes, reports, sources
+from investd.config import INVESTD_PERSIST, init_dirs
+from investd.transaction import TX_FILENAME
 
-app_name = "investd"
-log = logging.getLogger(app_name)
+APP_NAME = "investd"
+log = logging.getLogger(APP_NAME)
+
+HELP_TEXT = f"""{APP_NAME} - A tool for summarizing investments.
+
+How it works: Investd read accounts statements from a INVESTD_SOURCES directory,
+process them and write HTML reports to the INVESTD_REPORTS directory.
+
+By default, both INVESTD_SOURCES and INVESTD_REPORTS directories are located in the
+INVESTD_DATA dir. Each of these locations can be configured by environment variables.
+If INVESTD_DATA environment variable is not provided, a dir named 'investd_data'
+at the current working directory will be created and used as such.
+"""
 
 
-cli = click.Group(name=app_name, help="investd - A tool for summarizing investments.")
+cli = click.Group(name=APP_NAME, help=HELP_TEXT)
 
 
 @cli.command(name="ingest-sources")
 @click.option(
     "--output",
     type=click.Path(dir_okay=False, writable=True),
-    default=PERSIST_PATH / "tx.csv",
+    default=INVESTD_PERSIST / TX_FILENAME,
     help="Output path",
 )
 def ingest_sources_cmd(output: Path):
-    df_tx = ingest_sources_as_df()
+    df_tx = sources.ingest_all()
     log.info(f"Writing {output}")
     df_tx.to_csv(output, index=False)
 
@@ -45,8 +55,8 @@ def ingest_sources_cmd(output: Path):
 )
 def report_cmd(report: str, ingest: bool):
     if ingest:
-        df_tx = ingest_sources_as_df()
-        df_tx.to_csv(PERSIST_PATH / "tx.csv", index=False)
+        df_tx = sources.ingest_all()
+        df_tx.to_csv(INVESTD_PERSIST / TX_FILENAME, index=False)
     path_output = reports.generate_report(report)
     log.info(f"Report created: {path_output}")
     print(path_output)
@@ -62,7 +72,7 @@ def report_cmd(report: str, ingest: bool):
 @click.option("--end", "-e", default=None, help="End date in format YYYY-MM-DD")
 @click.option("--symbols", "-y", default=None, help="Symbols e.g. AAPL,CDR.PL")
 def quotes_cmd(start: Optional[str], end: Optional[str], symbols: Optional[str]):
-    generate_quotes_csv(
+    quotes.download_quotes_to_csv(
         start_date=date.fromisoformat(start) if start else None,
         end_date=date.fromisoformat(end) if end else None,
         symbols=symbols.split(",") if symbols else None,
@@ -70,4 +80,5 @@ def quotes_cmd(start: Optional[str], end: Optional[str], symbols: Optional[str])
 
 
 if __name__ == "__main__":
+    init_dirs()
     cli()

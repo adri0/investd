@@ -1,29 +1,13 @@
-# ---
-# jupyter:
-#   jupytext:
-#     formats: ipynb,py:percent
-#     text_representation:
-#       extension: .py
-#       format_name: percent
-#       format_version: '1.3'
-#       jupytext_version: 1.14.1
-#   kernelspec:
-#     display_name: Python 3 (ipykernel)
-#     language: python
-#     name: python3
-# ---
-
 # %%
 from datetime import datetime
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from dateutil import relativedelta
 from IPython.display import Markdown, display
 
 from investd import views
-from investd.config import PERSIST_PATH, REF_CURRENCY
+from investd.config import INVESTD_REF_CURRENCY
 from investd.transaction import load_transactions
 
 sns.set_theme()
@@ -35,7 +19,7 @@ sns.set_theme()
 now = datetime.now()
 Markdown(
     f"""
-Generated at: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{REF_CURRENCY}**
+Generated at: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{INVESTD_REF_CURRENCY}**
 """
 )
 
@@ -49,7 +33,7 @@ df_tx = df_tx[df_tx["timestamp"] <= now]
 # %%
 Markdown(
     f"""
-{views.total_invested_ref_currency(df_tx):.2f} {REF_CURRENCY}
+{views.total_invested_ref_currency(df_tx):.2f} {INVESTD_REF_CURRENCY}
 """
 )
 
@@ -60,7 +44,7 @@ Markdown(
 df = views.invested_ref_amount_by_col(df_tx, "type")
 
 display(df)
-fig = df.plot.pie(y=str(REF_CURRENCY))
+fig = df.plot.pie(y=str(INVESTD_REF_CURRENCY))
 fig.get_legend().remove()
 
 # %% [markdown]
@@ -70,7 +54,7 @@ fig.get_legend().remove()
 df = views.amounts_by_currency(df_tx)
 
 display(df)
-fig = df.plot.pie(y=str(REF_CURRENCY))
+fig = df.plot.pie(y=str(INVESTD_REF_CURRENCY))
 fig.get_legend().remove()
 
 # %% [markdown]
@@ -89,6 +73,6 @@ fig, ax = plt.subplots()
 fig.autofmt_xdate()
 
 cumsum = df_tx["amount_ref_currency"].cumsum()
-df_cum = pd.DataFrame({REF_CURRENCY: cumsum, "Date": df_tx["timestamp"]})
+df_cum = pd.DataFrame({INVESTD_REF_CURRENCY: cumsum, "Date": df_tx["timestamp"]})
 
-fig = sns.lineplot(x="Date", y=REF_CURRENCY, data=df_cum, ax=ax)
+fig = sns.lineplot(x="Date", y=INVESTD_REF_CURRENCY, data=df_cum, ax=ax)

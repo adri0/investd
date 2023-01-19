@@ -5,9 +5,10 @@ from typing import Iterable, Optional
 import pandas as pd
 import yfinance
 
-from .config import PERSIST_PATH
-from .transaction import load_transactions
+from investd.config import INVESTD_PERSIST
+from investd.transaction import load_transactions
 
+QUOTES_FILENAME = "quotes.csv"
 SYMBOL_SUFFIX_ADJUST = {"FR": "PA", "UK": "L", "PL": "WA"}
 
 
@@ -30,7 +31,7 @@ def fetch_quotes(
     )
 
 
-def generate_quotes_csv(
+def download_quotes_to_csv(
     output_path: Optional[Path] = None,
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
@@ -42,11 +43,13 @@ def generate_quotes_csv(
         from_date=start_date or df_tx["timestamp"].min().date(),
         until_date=end_date or date.today(),
     )
-    df_quotes.to_csv(output_path or PERSIST_PATH / "quotes.csv")
+    df_quotes.to_csv(output_path or INVESTD_PERSIST / QUOTES_FILENAME)
 
 
 def load_quotes() -> pd.DataFrame:
-    df_quotes = pd.read_csv(PERSIST_PATH / "quotes.csv", header=[0, 1, 2], index_col=0)
+    df_quotes = pd.read_csv(
+        INVESTD_PERSIST / QUOTES_FILENAME, header=[0, 1, 2], index_col=0
+    )
     df_quotes.index = df_quotes.index.map(lambda dt: pd.to_datetime(dt).date())
     df_quotes.sort_index(inplace=True, axis=0)
     df_quotes.sort_index(inplace=True, axis=1)

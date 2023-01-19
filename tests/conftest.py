@@ -1,12 +1,12 @@
-import io
-import os
 from pathlib import Path
+from typing import Generator
 
 import pandas as pd
 import pytest
 
 from investd.common import Action, AssetType, Currency
-from investd.config import PERSIST_PATH, SOURCE_BASE_PATH
+from investd.config import INVESTD_PERSIST, INVESTD_REPORTS, INVESTD_SOURCES
+from investd.quotes import QUOTES_FILENAME
 
 
 @pytest.fixture
@@ -15,35 +15,36 @@ def path_resources() -> Path:
 
 
 @pytest.fixture
-def cleanup_reports(path_resources):
+def setup_reports() -> Generator[None, None, None]:
+    INVESTD_REPORTS.mkdir(exist_ok=True)
     yield
-    for path in (path_resources / "data/reports").glob("*.html"):
+    for path in INVESTD_REPORTS.glob("*.html"):
         path.unlink()
 
 
 @pytest.fixture
 def path_revolut_csv() -> Path:
-    return SOURCE_BASE_PATH / "revolut_stocks/revolut-stocks-statement.csv"
+    return INVESTD_SOURCES / "revolut_stocks/revolut-stocks-statement.csv"
 
 
 @pytest.fixture
 def path_xtb_xlsx() -> Path:
-    return SOURCE_BASE_PATH / "xtb/xtb-statement.xlsx"
+    return INVESTD_SOURCES / "xtb/xtb-statement.xlsx"
 
 
 @pytest.fixture
 def path_xtb_csv() -> Path:
-    return SOURCE_BASE_PATH / "xtb/xtb-statement.csv"
+    return INVESTD_SOURCES / "xtb/xtb-statement.csv"
 
 
 @pytest.fixture
 def path_bonds_xls() -> Path:
-    return SOURCE_BASE_PATH / "bonds/bonds-statement.xls"
+    return INVESTD_SOURCES / "bonds/bonds-statement.xls"
 
 
 @pytest.fixture
 def path_bossa_csv() -> Path:
-    return SOURCE_BASE_PATH / "bossa/bossa-statement.csv"
+    return INVESTD_SOURCES / "bossa/bossa-statement.csv"
 
 
 @pytest.fixture
@@ -73,4 +74,4 @@ def df_tx_minimal() -> pd.DataFrame:
 
 @pytest.fixture
 def df_quotes() -> pd.DataFrame:
-    return pd.read_csv(PERSIST_PATH / "quotes.csv")
+    return pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME)
