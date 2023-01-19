@@ -43,5 +43,4 @@ def init_dirs() -> None:
             "Let me create it for you."
         )
     for conf_path in (INVESTD_SOURCES, INVESTD_PERSIST, INVESTD_REPORTS):
-        if not conf_path.exists():
-            os.makedirs(conf_path)
+        conf_path.mkdir(exist_ok=True)

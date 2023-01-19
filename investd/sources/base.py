@@ -3,8 +3,8 @@ import logging
 from pathlib import Path
 from typing import Generator, Iterable
 
-from ..config import INVESTD_SOURCES
-from ..transaction import Transaction
+from investd.config import INVESTD_SOURCES
+from investd.transaction import Transaction
 
 log = logging.getLogger(__name__)
 

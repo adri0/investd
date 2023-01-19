@@ -1,9 +1,9 @@
-pip
-wheel
+black
+isort
 mypy
-types-python-dateutil
+pip
 pytest
 pytest-cov
 pytest-dotenv
-isort
-black
+types-python-dateutil
+wheel

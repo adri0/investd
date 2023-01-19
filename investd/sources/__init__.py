@@ -18,8 +18,8 @@ sources: list[Type[SourceBase]] = [
 
 def ingest_all() -> pd.DataFrame:
     df_tx = pd.DataFrame(
-        data=chain.from_iterable(Source().load_transactions() for Source in sources),
-        columns=(field.name for field in fields(Transaction)),
+        list(chain.from_iterable(Source().load_transactions() for Source in sources)),
+        columns=[field.name for field in fields(Transaction)],
     )
     df_tx.sort_values(by="timestamp", ascending=True, inplace=True)
     return df_tx

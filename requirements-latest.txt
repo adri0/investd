@@ -1,12 +1,12 @@
-pandas
-openpyxl
-pydantic
 PyYAML
 click
-python-dotenv
 ipython
 jupyter
 jupytext
+openpyxl
+pandas
+pydantic
+python-dotenv
 seaborn
-yfinance
 xlrd
+yfinance
