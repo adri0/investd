@@ -75,3 +75,12 @@ def df_tx_minimal() -> pd.DataFrame:
 @pytest.fixture
 def df_quotes() -> pd.DataFrame:
     return pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME)
+
+
+@pytest.fixture
+def yfinance_quotes() -> pd.DataFrame:
+    df_quotes = pd.read_csv(
+        INVESTD_PERSIST / "yfinance_quotes.csv", header=[0, 1], index_col=0
+    )
+    df_quotes.index = df_quotes.index.map(lambda dt: pd.to_datetime(dt))
+    return df_quotes
