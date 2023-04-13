@@ -68,7 +68,7 @@ def df_tx_minimal() -> pd.DataFrame:
     categories = ("type", "platform", "currency", "action")
     for cat in categories:
         df_tx[cat] = df_tx[cat].astype("category")
-    df_tx["timestamp"] = df_tx["timestamp"].astype("datetime64")
+    df_tx["timestamp"] = df_tx["timestamp"].astype("datetime64[ns]")
     return df_tx
 
 
