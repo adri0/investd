@@ -8,7 +8,6 @@ from investd.transaction import Transaction
 
 
 class TestSource(SourceBase):
-
     source_name = "test_source"
 
     def parse_source_file(self, tx_path: Path) -> Iterable[Transaction]:

@@ -47,26 +47,20 @@ def download_quotes_to_csv(
     )
 
     # transform yfinance table to simpler format
-    symbol_to_close_column_index = {
-        adjusted_symbol_to_symbol[symbol]: df_quotes.columns.tolist().index(
-            (symbol, "Close")
-        )
-        for symbol in adjusted_symbol_to_symbol.keys()
-        if symbol
-    }
-    pdf = pd.DataFrame.from_dict(
+    df = pd.DataFrame.from_dict(
         {
-            symbol: df_quotes.iloc[:, index]
-            for symbol, index in symbol_to_close_column_index.items()
+            symbol: df_quotes.loc[:, (symbol, "Close")]
+            for symbol in adjusted_symbol_to_symbol.keys()
+            if symbol
         }
     )
-    pdf["date"] = df_quotes.index.date
-    pdf = pdf.melt(
-        id_vars=["date"], value_vars=pdf.columns, var_name="symbol", value_name="price"
+    df["date"] = df_quotes.index.date
+    df = df.melt(
+        id_vars=["date"], value_vars=df.columns, var_name="symbol", value_name="price"
     )
-    pdf = pdf.sort_values(["date", "symbol"])
+    df = df.sort_values(["date", "symbol"])
 
-    pdf.to_csv(output_path or INVESTD_PERSIST / QUOTES_FILENAME, index=False)
+    df.to_csv(output_path or INVESTD_PERSIST / QUOTES_FILENAME, index=False)
 
 
 def load_quotes() -> pd.DataFrame:
