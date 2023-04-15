@@ -68,10 +68,19 @@ def df_tx_minimal() -> pd.DataFrame:
     categories = ("type", "platform", "currency", "action")
     for cat in categories:
         df_tx[cat] = df_tx[cat].astype("category")
-    df_tx["timestamp"] = df_tx["timestamp"].astype("datetime64")
+    df_tx["timestamp"] = df_tx["timestamp"].astype("datetime64[ns]")
     return df_tx
 
 
 @pytest.fixture
 def df_quotes() -> pd.DataFrame:
     return pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME)
+
+
+@pytest.fixture
+def yfinance_quotes() -> pd.DataFrame:
+    df_quotes = pd.read_csv(
+        INVESTD_PERSIST / "yfinance_quotes.csv", header=[0, 1], index_col=0
+    )
+    df_quotes.index = df_quotes.index.map(lambda dt: pd.to_datetime(dt))
+    return df_quotes

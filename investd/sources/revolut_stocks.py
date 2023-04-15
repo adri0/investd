@@ -9,7 +9,6 @@ from investd.transaction import Transaction
 
 
 class RevolutStocks(SourceBase):
-
     source_name = "revolut_stocks"
 
     def parse_source_file(self, path: Path) -> Iterable[Transaction]:
