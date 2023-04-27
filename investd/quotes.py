@@ -28,6 +28,7 @@ def fetch_quotes(
         start=from_date,
         end=until_date,
         group_by="ticker",
+        interval="1d",
     )
 
 
@@ -54,7 +55,7 @@ def download_quotes_to_csv(
             if symbol
         }
     )
-    df["date"] = df_quotes.index.date
+    df["date"] = df_quotes.index
     df = df.melt(
         id_vars=["date"], value_vars=df.columns, var_name="symbol", value_name="price"
     )

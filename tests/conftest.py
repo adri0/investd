@@ -82,5 +82,5 @@ def yfinance_quotes() -> pd.DataFrame:
     df_quotes = pd.read_csv(
         INVESTD_PERSIST / "yfinance_quotes.csv", header=[0, 1], index_col=0
     )
-    df_quotes.index = df_quotes.index.map(lambda dt: pd.to_datetime(dt))
+    df_quotes.index = df_quotes.index.map(lambda dt: pd.to_datetime(dt).date())
     return df_quotes
