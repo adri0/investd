@@ -1,6 +1,6 @@
 from datetime import date
 from pathlib import Path
-from typing import Iterable, List, Optional
+from typing import Iterable, Optional
 
 import pandas as pd
 import yfinance
@@ -37,7 +37,7 @@ def download_quotes_to_csv(
     output_path: Optional[Path] = None,
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
-    symbols: Optional[List[str]] = None,
+    symbols: Optional[list[str]] = None,
     include_exchange_rates: Optional[bool] = False,
 ) -> None:
     df_tx = load_transactions()
@@ -60,7 +60,7 @@ def download_quotes_to_csv(
         {
             symbol: df_quotes.loc[:, (symbol, "Close")]
             for symbol in adjusted_symbol_to_symbol.keys()
-            if symbol
+            if symbol in df_quotes.columns.get_level_values(0)
         }
     )
     df["date"] = df_quotes.index
@@ -80,10 +80,10 @@ def load_quotes() -> pd.DataFrame:
 
 def extract_exchange_rates_symbols(
     df_tx: pd.DataFrame, ref_currency: Optional[Currency] = None
-) -> List[str]:
+) -> set[str]:
     ref_currency = ref_currency or INVESTD_REF_CURRENCY
-    return [
+    return {
         f"{cur}{ref_currency}=X"
         for cur in df_tx["currency"].unique()
         if cur != ref_currency
-    ]
+    }
