@@ -50,6 +50,7 @@ def test_download_quotes_csv(
         "start": TEST_START_DATE,
         "end": TEST_END_DATE,
         "group_by": "ticker",
+        "interval": "1d",
     }
 
 
