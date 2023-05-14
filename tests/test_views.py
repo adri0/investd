@@ -1,7 +1,9 @@
+from datetime import date
 from typing import Any, Iterable
 
 import pandas as pd
 import pytest
+from pandas.testing import assert_frame_equal
 
 from investd import views
 from investd.common import AssetType as Asset
@@ -106,3 +108,25 @@ def test_amounts_over_time(
     expected: pd.DataFrame,
 ):
     assert views.amount_over_time(df_tx_minimal, period).equals(expected)
+
+
+def test_portfolio_value(
+    df_tx_minimal: pd.DataFrame, df_quotes_minimal: pd.DataFrame
+) -> None:
+    at_date = date(2022, 1, 30)
+    df = views.portfolio_value(df_tx_minimal, df_quotes_minimal, at_date)
+    expected = pd.DataFrame(
+        {
+            "Invested amount PLN": [450, 675, 1500],
+            "Invested amount": [100.0, 150.0, 300.0],
+            "Quantity": [2, 6, 2],
+            "type": [Asset.Stock, Asset.Stock, Asset.ETF],
+            "currency": [Cur.USD, Cur.USD, Cur.EUR],
+            "platform": ["revolut_stocks", "revolut_stocks", "xtb"],
+            "quote": [55.0, 20.0, 160.0],
+            "Amount": [110.0, 120.0, 320.0],
+            "Amount PLN": [506.0, 552.0, 1600.0],
+        },
+        index=pd.Index(["LOL", "TLDR", "XOXO"], name="symbol"),
+    )
+    assert_frame_equal(df, expected)
