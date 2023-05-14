@@ -76,6 +76,7 @@ def quotes_cmd(start: Optional[str], end: Optional[str], symbols: Optional[str])
         start_date=date.fromisoformat(start) if start else None,
         end_date=date.fromisoformat(end) if end else None,
         symbols=symbols.split(",") if symbols else None,
+        include_exchange_rates=True,
     )
 
 
