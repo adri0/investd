@@ -149,8 +149,8 @@ def portfolio_value(
     )
     df_portfolio = df_portfolio.rename(
         {
-            "amount_at_date": "Amount",
-            "amount_at_date_ref_currency": f"Amount {INVESTD_REF_CURRENCY}",
+            "amount_at_date": "Amount at date",
+            "amount_at_date_ref_currency": f"Amount at date {INVESTD_REF_CURRENCY}",
             "amount_signed": "Invested amount",
             "amount_ref_currency_signed": f"Invested amount {INVESTD_REF_CURRENCY}",
             "quantity_signed": "Quantity",

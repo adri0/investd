@@ -73,11 +73,6 @@ def df_tx_minimal() -> pd.DataFrame:
 
 
 @pytest.fixture
-def df_quotes() -> pd.DataFrame:
-    return pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME)
-
-
-@pytest.fixture
 def df_quotes_minimal() -> pd.DataFrame:
     return pd.DataFrame(
         {
@@ -86,6 +81,11 @@ def df_quotes_minimal() -> pd.DataFrame:
             "price": [55, 20, 160, 4.6, 5.0],
         }
     )
+
+
+@pytest.fixture
+def df_quotes() -> pd.DataFrame:
+    return pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME)
 
 
 @pytest.fixture
