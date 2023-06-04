@@ -116,8 +116,8 @@ def portfolio_value(
     df_tx: pd.DataFrame, df_quotes: pd.DataFrame, at_date: date
 ) -> pd.DataFrame:
     df_tx = _add_signed_cols(df_tx)
-    timestamp = pd.Timestamp(at_date)
-    df_tx = df_tx[df_tx["timestamp"] <= timestamp]
+    at_date_ts = pd.Timestamp(at_date)
+    df_tx = df_tx[df_tx["timestamp"] <= at_date_ts]
     df_portfolio = df_tx.groupby("symbol").agg(
         {
             "amount_ref_currency_signed": "sum",
@@ -128,7 +128,7 @@ def portfolio_value(
             "platform": "first",
         }
     )
-    df_quotes_date = df_quotes[df_quotes["date"] == timestamp]
+    df_quotes_date = df_quotes[df_quotes["date"] == at_date_ts]
     quotes = df_quotes_date.set_index("symbol")["price"]
     df_portfolio["quote"] = df_portfolio.index.map(quotes)
     df_portfolio["amount_at_date"] = (

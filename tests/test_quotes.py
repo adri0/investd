@@ -27,6 +27,7 @@ def test_adjust_symbol() -> None:
     assert adjust_symbol("BETASPXP.PL") == "BETASPXP.WA"
     assert adjust_symbol("INR.FR") == "INR.PA"
     assert adjust_symbol("CSPX.UK") == "CSPX.L"
+    assert adjust_symbol("DAXEX.DE") == "EXS1.DE"
 
 
 @pytest.mark.parametrize("include_exchange_rates", [True, False])
@@ -54,9 +55,9 @@ def test_download_quotes_csv(
     )
 
     expected_tickers = (
-        "AAPL AMZN CDR.WA CSPX.L DAXEX.DE GOOGL TSLA V80A.DE"
+        "AAPL AMZN CDR.WA CSPX.L EXS1.DE GOOGL TSLA V80A.DE"
         if not include_exchange_rates
-        else "AAPL AMZN CDR.WA CSPX.L DAXEX.DE EURPLN=X GOOGL TSLA USDPLN=X V80A.DE"
+        else "AAPL AMZN CDR.WA CSPX.L EURPLN=X EXS1.DE GOOGL TSLA USDPLN=X V80A.DE"
     )
 
     df_quotes = pd.read_csv(output_path)
@@ -74,7 +75,8 @@ def test_load_quotes() -> None:
     df_quotes = load_quotes()
     assert df_quotes.shape == (_expected_rows(), 3)
     assert df_quotes[
-        (df_quotes["date"] == date(2022, 12, 29)) & (df_quotes["symbol"] == "AMZN")
+        (df_quotes["date"] == pd.Timestamp(2022, 12, 29))
+        & (df_quotes["symbol"] == "AMZN")
     ]["price"].iloc[0] == approx(84.18)
 
 
