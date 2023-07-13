@@ -28,13 +28,20 @@ Generated at: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{INVESTD_RE
 df_tx = load_transactions()
 df_tx = df_tx[df_tx["timestamp"] <= now]
 
-# %% [markdown]
-# ### Invested amount
+# %%
+
+df_quotes = load_quotes()
+df_portfolio = views.portfolio_value(
+    df_tx, df_quotes, at_date=date(2022, 12, 30)
+).round(2)
+
+display(df_portfolio)
 
 # %%
 Markdown(
     f"""
-{views.total_invested_ref_currency(df_tx):.2f} {INVESTD_REF_CURRENCY}
+Portfolio value at date {INVESTD_REF_CURRENCY}: {df_portfolio[f"Amount at date {INVESTD_REF_CURRENCY}"].sum()}
+Total invested at date {INVESTD_REF_CURRENCY}: {views.total_invested_ref_currency(df_tx):.2f} {INVESTD_REF_CURRENCY}
 """
 )
 
@@ -77,14 +84,3 @@ cumsum = df_tx["amount_ref_currency"].cumsum()
 df_cum = pd.DataFrame({INVESTD_REF_CURRENCY: cumsum, "Date": df_tx["timestamp"]})
 
 fig = sns.lineplot(x="Date", y=INVESTD_REF_CURRENCY, data=df_cum, ax=ax)
-
-# %%
-
-df_quotes = load_quotes()
-df_portfolio = views.portfolio_value(
-    df_tx, df_quotes, at_date=date(2022, 12, 30)
-).round(2)
-
-display(df_portfolio)
-
-print("Total amount PLN:", df_portfolio[f"Amount at date {INVESTD_REF_CURRENCY}"].sum())
