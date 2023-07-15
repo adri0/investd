@@ -43,7 +43,7 @@ class XTB(SourceBase):
     def _convert(self, record: pd.Series) -> Transaction:
         action, quantity, price = XTB.parse_comment(record[COL_COMMENT])
         return Transaction(
-            id=record[COL_ID],
+            id=str(record[COL_ID]),
             timestamp=record[COL_TIME],
             symbol=record[COL_SYMBOL],
             type=AssetType.ETF,
