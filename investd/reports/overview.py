@@ -1,4 +1,5 @@
 # %%
+import os
 from datetime import date, datetime
 
 import matplotlib.pyplot as plt
@@ -18,11 +19,21 @@ sns.set_theme()
 
 # %%
 now = datetime.now()
-Markdown(
-    f"""
-Generated at: **{now.strftime("%Y-%m-%d")}** | Reference currency: **{INVESTD_REF_CURRENCY}**
-"""
+
+report_date_env_var = os.getenv("REPORT_DATE")
+report_date = (
+    date.fromisoformat(report_date_env_var) if report_date_env_var else date.today()
 )
+
+pd.DataFrame(
+    {
+        "Reporting date": [report_date],
+        "Reference currency": [INVESTD_REF_CURRENCY],
+        "Created at": [now.strftime("%Y-%m-%d")],
+    },
+    index=[""],
+)
+
 
 # %%
 df_tx = load_transactions()
@@ -31,9 +42,7 @@ df_tx = df_tx[df_tx["timestamp"] <= now]
 # %%
 
 df_quotes = load_quotes()
-df_portfolio = views.portfolio_value(
-    df_tx, df_quotes, at_date=date(2022, 12, 30)
-).round(2)
+df_portfolio = views.portfolio_value(df_tx, df_quotes, at_date=report_date).round(2)
 
 display(df_portfolio)
 
@@ -41,6 +50,7 @@ display(df_portfolio)
 Markdown(
     f"""
 Portfolio value at date {INVESTD_REF_CURRENCY}: {df_portfolio[f"Amount at date {INVESTD_REF_CURRENCY}"].sum()}
+
 Total invested at date {INVESTD_REF_CURRENCY}: {views.total_invested_ref_currency(df_tx):.2f} {INVESTD_REF_CURRENCY}
 """
 )

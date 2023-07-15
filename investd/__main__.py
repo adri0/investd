@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import date
 from pathlib import Path
 from typing import Optional
@@ -53,10 +54,17 @@ def ingest_sources_cmd(output: Path):
     help="Ingests sources before generating report",
     is_flag=True,
 )
-def report_cmd(report: str, ingest: bool):
+@click.option(
+    "--date",
+    "-d",
+    default=None,
+    help="Show portfolio at a certain date. Use today if not provided.",
+)
+def report_cmd(report: str, ingest: bool, date: Optional[str]):
     if ingest:
         df_tx = sources.ingest_all()
         df_tx.to_csv(INVESTD_PERSIST / TX_FILENAME, index=False)
+    os.environ["REPORT_DATE"] = date
     path_output = reports.generate_report(report)
     log.info(f"Report created: {path_output}")
     print(path_output)
