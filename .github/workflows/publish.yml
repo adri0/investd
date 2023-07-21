@@ -42,7 +42,7 @@ jobs:
         run: |
           echo "Generate overview report using .env.template variables"
           export $(grep -v '^#' .template.env | xargs)
-          report_path=$(python -m investd report)
+          report_path=$(python -m investd report --date=2022-12-30)
           echo "Rename report file to index.html"
           mv $report_path "$(dirname $report_path)/index.html"
 

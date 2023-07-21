@@ -143,13 +143,13 @@ def portfolio_value(
         )
         .astype(float)
     )
-    df_portfolio["amount_at_date_ref_currency"] = (
+    df_portfolio["amount_ref_currency_at_date"] = (
         df_portfolio["amount_at_date"] * exchange_rate_to_ref_cur
     )
     df_portfolio = df_portfolio.rename(
         {
             "amount_at_date": "Amount at date",
-            "amount_at_date_ref_currency": f"Amount at date {INVESTD_REF_CURRENCY}",
+            "amount_ref_currency_at_date": f"Amount at date {INVESTD_REF_CURRENCY}",
             "amount_signed": "Invested amount",
             "amount_ref_currency_signed": f"Invested amount {INVESTD_REF_CURRENCY}",
             "quantity_signed": "Quantity",

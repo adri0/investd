@@ -3,6 +3,7 @@ import os
 from datetime import date, datetime
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from IPython.display import Markdown, display
@@ -13,7 +14,7 @@ from investd.quotes import load_quotes
 from investd.transaction import load_transactions
 
 sns.set_theme()
-
+pd.options.display.float_format = "{:,.2f}".format
 # %% [markdown]
 # # Portfolio overview
 
@@ -29,7 +30,7 @@ pd.DataFrame(
     {
         "Reporting date": [report_date],
         "Reference currency": [INVESTD_REF_CURRENCY],
-        "Created at": [now.strftime("%Y-%m-%d")],
+        "Created date": [now.strftime("%Y-%m-%d")],
     },
     index=[""],
 )
@@ -37,23 +38,30 @@ pd.DataFrame(
 
 # %%
 df_tx = load_transactions()
-df_tx = df_tx[df_tx["timestamp"] <= now]
+df_tx = df_tx[df_tx["timestamp"] <= pd.Timestamp(report_date)]
 
 # %%
 
 df_quotes = load_quotes()
-df_portfolio = views.portfolio_value(df_tx, df_quotes, at_date=report_date).round(2)
-
-display(df_portfolio)
+df_portfolio = views.portfolio_value(df_tx, df_quotes, at_date=report_date)
 
 # %%
-Markdown(
-    f"""
-Portfolio value at date {INVESTD_REF_CURRENCY}: {df_portfolio[f"Amount at date {INVESTD_REF_CURRENCY}"].sum()}
 
-Total invested at date {INVESTD_REF_CURRENCY}: {views.total_invested_ref_currency(df_tx):.2f} {INVESTD_REF_CURRENCY}
-"""
-)
+ref_amount_cols = [
+    col for col in df_portfolio.columns if str(INVESTD_REF_CURRENCY) in col
+]
+row_total = df_portfolio.loc[:, ref_amount_cols].sum(axis=0)
+row_total = pd.DataFrame(row_total, columns=["Total"]).transpose()
+df_p_total = pd.concat([df_portfolio, row_total])
+
+
+def highlight_total_row(row: pd.Series) -> list[str]:
+    if row.name == "Total":
+        return [("font-weight: bold" if not np.isnan(val) else "") for val in row]
+    return [""] * len(row)
+
+
+df_p_total.style.apply(highlight_total_row, axis=1).format(na_rep="", precision=2)
 
 # %% [markdown]
 # ### Invested amount by asset type
