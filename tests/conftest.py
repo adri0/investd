@@ -73,8 +73,19 @@ def df_tx_minimal() -> pd.DataFrame:
 
 
 @pytest.fixture
+def df_quotes_minimal() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "date": pd.to_datetime(["2022-01-30"] * 5),
+            "symbol": ["LOL", "TLDR", "XOXO", "USDPLN=X", "EURPLN=X"],
+            "price": [55, 20, 160, 4.6, 5.0],
+        }
+    )
+
+
+@pytest.fixture
 def df_quotes() -> pd.DataFrame:
-    return pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME)
+    return pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME, parse_dates=["date"])
 
 
 @pytest.fixture
@@ -82,5 +93,5 @@ def yfinance_quotes() -> pd.DataFrame:
     df_quotes = pd.read_csv(
         INVESTD_PERSIST / "yfinance_quotes.csv", header=[0, 1], index_col=0
     )
-    df_quotes.index = df_quotes.index.map(lambda dt: pd.to_datetime(dt).date())
+    df_quotes.index = df_quotes.index.map(pd.to_datetime)
     return df_quotes

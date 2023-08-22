@@ -10,13 +10,17 @@ from investd.config import INVESTD_PERSIST, INVESTD_REF_CURRENCY
 from investd.transaction import load_transactions
 
 QUOTES_FILENAME = "quotes.csv"
-SYMBOL_SUFFIX_ADJUST = {"FR": "PA", "UK": "L", "PL": "WA"}
+SYMBOL_EXCH_ADJUST = {"FR": "PA", "UK": "L", "PL": "WA"}
+SYMBOL_NAME_ADJUST = {"DAXEX": "EXS1"}
 
 
 def adjust_symbol(symbol: str) -> str:
+    """Adjust symbol to match how it's used by yfinance"""
     match symbol.split("."):
-        case main_part, suffix:
-            return f"{main_part}.{SYMBOL_SUFFIX_ADJUST.get(suffix, suffix)}"
+        case name, exchange:
+            name = SYMBOL_NAME_ADJUST.get(name, name)
+            exchange = SYMBOL_EXCH_ADJUST.get(exchange, exchange)
+            return f"{name}.{exchange}"
         case _:
             return symbol
 
@@ -42,6 +46,8 @@ def download_quotes_to_csv(
 ) -> None:
     df_tx = load_transactions()
     symbols_selected = symbols or list(df_tx["symbol"].unique())
+
+    # If `symbols` is specified, `include_exchange_rates` is ignored
     if not symbols and include_exchange_rates:
         exchange_rate_symbols = extract_exchange_rates_symbols(df_tx)
         symbols_selected += exchange_rate_symbols
@@ -58,9 +64,9 @@ def download_quotes_to_csv(
     # transform yfinance table to simpler format
     df = pd.DataFrame.from_dict(
         {
-            symbol: df_quotes.loc[:, (symbol, "Close")]
-            for symbol in adjusted_symbol_to_symbol.keys()
-            if symbol in df_quotes.columns.get_level_values(0)
+            symbol: df_quotes.loc[:, (adj_symbol, "Close")]
+            for adj_symbol, symbol in adjusted_symbol_to_symbol.items()
+            if adj_symbol in df_quotes.columns.get_level_values(0)
         }
     )
     df["date"] = df_quotes.index
@@ -73,9 +79,7 @@ def download_quotes_to_csv(
 
 
 def load_quotes() -> pd.DataFrame:
-    df_quotes = pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME)
-    df_quotes["date"] = df_quotes["date"].map(lambda dt: pd.to_datetime(dt).date())
-    return df_quotes
+    return pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME, parse_dates=["date"])
 
 
 def extract_exchange_rates_symbols(

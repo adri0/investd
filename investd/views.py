@@ -4,6 +4,7 @@
     Functions for calculating portfolio metrics, such as net worth, etc.
 """
 
+from datetime import date
 from typing import Any, Iterable
 
 import pandas as pd
@@ -17,7 +18,7 @@ def _add_signed_cols(df_tx: pd.DataFrame) -> pd.DataFrame:
     Add columns ending with _signed to dataframe corresponding to
     negative sign to original amount column when action SELL.
     """
-    cols = ("amount_ref_currency", "amount")
+    cols = ("amount_ref_currency", "amount", "quantity")
 
     def get_signed_amount(row, col: str) -> float:
         return row[col] * (-1 if row["action"] == Action.SELL else 1)
@@ -109,3 +110,50 @@ def amount_over_time(df_tx: pd.DataFrame, period: str) -> pd.DataFrame:
         df_ot, columns=[str(INVESTD_REF_CURRENCY), f"Cumulated {INVESTD_REF_CURRENCY}"]
     )
     return df_ot
+
+
+def portfolio_value(
+    df_tx: pd.DataFrame, df_quotes: pd.DataFrame, at_date: date
+) -> pd.DataFrame:
+    df_tx = _add_signed_cols(df_tx)
+    at_date_ts = pd.Timestamp(at_date)
+    df_tx = df_tx[df_tx["timestamp"] <= at_date_ts]
+    df_portfolio = df_tx.groupby("symbol").agg(
+        {
+            "amount_ref_currency_signed": "sum",
+            "amount_signed": "sum",
+            "quantity_signed": "sum",
+            "type": "first",
+            "currency": "first",
+            "platform": "first",
+        }
+    )
+    df_quotes_date = df_quotes[df_quotes["date"] == at_date_ts]
+    quotes = df_quotes_date.set_index("symbol")["price"]
+    df_portfolio["quote"] = df_portfolio.index.map(quotes)
+    df_portfolio["amount_at_date"] = (
+        df_portfolio["quote"] * df_portfolio["quantity_signed"]
+    )
+    exchange_rate_to_ref_cur = (
+        df_portfolio["currency"]
+        .map(
+            lambda cur: quotes.get(f"{cur}{INVESTD_REF_CURRENCY}=X")
+            if cur != INVESTD_REF_CURRENCY
+            else 1
+        )
+        .astype(float)
+    )
+    df_portfolio["amount_ref_currency_at_date"] = (
+        df_portfolio["amount_at_date"] * exchange_rate_to_ref_cur
+    )
+    df_portfolio = df_portfolio.rename(
+        {
+            "amount_at_date": "Amount at date",
+            "amount_ref_currency_at_date": f"Amount at date {INVESTD_REF_CURRENCY}",
+            "amount_signed": "Invested amount",
+            "amount_ref_currency_signed": f"Invested amount {INVESTD_REF_CURRENCY}",
+            "quantity_signed": "Quantity",
+        },
+        axis=1,
+    )
+    return df_portfolio
