@@ -1,7 +1,8 @@
 import csv
-from datetime import datetime
 from pathlib import Path
 from typing import Iterable
+
+import dateutil.parser
 
 from investd.common import Action, AssetType, Currency
 from investd.sources.base import SourceBase
@@ -20,10 +21,9 @@ class RevolutStocks(SourceBase):
                     continue
                 amount = float(row["Total Amount"].replace("$", "").replace(",", ""))
                 price = float(row["Price per share"].replace("$", "").replace(",", ""))
-                timestamp = datetime.fromisoformat(row["Date"]).replace(tzinfo=None)
                 yield Transaction(
                     id="",
-                    timestamp=timestamp,
+                    timestamp=dateutil.parser.isoparse(row["Date"]),
                     symbol=row["Ticker"],
                     type=AssetType.Stock,
                     platform=self.source_name,
