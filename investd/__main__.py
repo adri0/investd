@@ -88,6 +88,10 @@ def quotes_cmd(start: Optional[str], end: Optional[str], symbols: Optional[str])
     )
 
 
-if __name__ == "__main__":
+def main() -> None:
     init_dirs()
     cli()
+
+
+if __name__ == "__main__":
+    main()
