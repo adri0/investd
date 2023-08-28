@@ -37,14 +37,15 @@ dev = ["black", "isort", "mypy", "types-python-dateutil"]
 test = ["pytest", "pytest-cov", "pytest-dotenv"]
 
 [project.scripts]
-sample = "investd.__main__:main"
+investd = "investd.__main__:main"
 
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-py-modules = ["investd"]
+[tool.setuptools.packages.find]
+include = ["investd*"]
+exclude = ["tests*"]
 
 [tool.isort]
 profile = "black"
