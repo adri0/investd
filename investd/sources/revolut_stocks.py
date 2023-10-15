@@ -1,7 +1,8 @@
 import csv
-from datetime import datetime
 from pathlib import Path
 from typing import Iterable
+
+import dateutil.parser
 
 from investd.common import Action, AssetType, Currency
 from investd.sources.base import SourceBase
@@ -15,21 +16,22 @@ class RevolutStocks(SourceBase):
         with path.open("r") as csvfile:
             csv_reader = csv.DictReader(csvfile)
             for row in csv_reader:
-                if not row["Ticker"] or row["Type"] not in ("BUY", "SELL"):
+                row_type, *_ = row["Type"].split()
+                if not row["Ticker"] or row_type not in ("BUY", "SELL"):
                     continue
+                amount = float(row["Total Amount"].replace("$", "").replace(",", ""))
+                price = float(row["Price per share"].replace("$", "").replace(",", ""))
                 yield Transaction(
                     id="",
-                    timestamp=datetime.strptime(row["Date"], "%d/%m/%Y %H:%M:%S"),
+                    timestamp=dateutil.parser.isoparse(row["Date"]),
                     symbol=row["Ticker"],
                     type=AssetType.Stock,
                     platform=self.source_name,
                     currency=Currency(row["Currency"]),
-                    amount=float(row["Total Amount"]),
+                    amount=amount,
                     quantity=float(row["Quantity"]),
                     exchange_rate=float(row["FX Rate"]),
-                    amount_ref_currency=(
-                        float(row["Total Amount"]) / float(row["FX Rate"])
-                    ),
-                    price=float(row["Price per share"]),
-                    action=Action(row["Type"].upper()),
+                    amount_ref_currency=(amount / float(row["FX Rate"])),
+                    price=price,
+                    action=Action(row_type.upper()),
                 )
