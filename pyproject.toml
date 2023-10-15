@@ -1,0 +1,64 @@
+[project]
+name = "investd"
+version = "0.0.1"
+description = "Lightweight investment tracker"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+license = {file = "LICENSE.txt"}
+authors = [
+  {name = "adri0"}
+]
+dependencies = [
+    "click",
+    "ipython",
+    "jupyter",
+    "jupytext",
+    "openpyxl",
+    "pandas>2.0.0",
+    "pydantic",
+    "python-dotenv",
+    "PyYAML",
+    "seaborn",
+    "xlrd",
+    "yfinance"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/adri0/investd"
+
+[project.optional-dependencies]
+dev = ["black", "isort", "mypy", "types-python-dateutil"]
+test = ["pytest", "pytest-cov", "pytest-dotenv"]
+
+[project.scripts]
+investd = "investd.__main__:main"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["investd*"]
+exclude = ["tests*"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+env_files = "tests/resources/.test.env"
+
+[tool.mypy]
+plugins = "pydantic.mypy"
+ignore_missing_imports = false
+follow_imports = "silent"
+
+[[tool.mypy.overrides]]
+module = "pandas"
+ignore_missing_imports = true
