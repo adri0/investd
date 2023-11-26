@@ -6,8 +6,8 @@ from typing import Any
 import pandas as pd
 from pydantic.dataclasses import dataclass
 
+from investd import config
 from investd.common import Action, AssetType, Currency
-from investd.config import INVESTD_PERSIST
 
 TX_FILENAME = "transactions.csv"
 
@@ -30,8 +30,12 @@ class Transaction:
 
 def load_transactions() -> pd.DataFrame:
     """Load transactions in persistence as a DataFrame."""
-    path = INVESTD_PERSIST / TX_FILENAME
-    df_tx = pd.read_csv(path, converters=_enum_fields(Transaction))
+    path = config.INVESTD_PERSIST / TX_FILENAME
+    df_tx = (
+        pd.read_csv(path, converters=_enum_fields(Transaction))
+        if path.exists()
+        else pd.DataFrame()
+    )
     schema = _to_pandas_schema(Transaction)
     return df_tx.astype(schema)
 

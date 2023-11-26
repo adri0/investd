@@ -42,5 +42,4 @@ def init_dirs() -> None:
             f"INVESTD_DATA directory ({INVESTD_DATA}) doesn't exist. "
             "Let me create it for you."
         )
-    for conf_path in (INVESTD_SOURCES, INVESTD_PERSIST, INVESTD_REPORTS):
-        conf_path.mkdir(exist_ok=True)
+        INVESTD_DATA.mkdir(exist_ok=True, parents=True)

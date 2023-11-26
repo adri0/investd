@@ -1,5 +1,5 @@
 version: 1
-disable_existing_loggers: false
+disable_existing_loggers: true
 formatters:
   default:
     format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -16,7 +16,7 @@ loggers:
   app:
     handlers:
     - console
-    level: INFO
+    level: DEBUG
     propagate: false
 root:
   handlers:

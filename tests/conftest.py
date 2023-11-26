@@ -4,8 +4,8 @@ from typing import Generator
 import pandas as pd
 import pytest
 
+from investd import config
 from investd.common import Action, AssetType, Currency
-from investd.config import INVESTD_PERSIST, INVESTD_REPORTS, INVESTD_SOURCES
 from investd.quotes import QUOTES_FILENAME
 
 
@@ -16,35 +16,35 @@ def path_resources() -> Path:
 
 @pytest.fixture
 def setup_reports() -> Generator[None, None, None]:
-    INVESTD_REPORTS.mkdir(exist_ok=True)
+    config.INVESTD_REPORTS.mkdir(exist_ok=True)
     yield
-    for path in INVESTD_REPORTS.glob("*.html"):
+    for path in config.INVESTD_REPORTS.glob("*.html"):
         path.unlink()
 
 
 @pytest.fixture
 def path_revolut_csv() -> Path:
-    return INVESTD_SOURCES / "revolut_stocks/revolut-stocks-statement.csv"
+    return config.INVESTD_SOURCES / "revolut_stocks/revolut-stocks-statement.csv"
 
 
 @pytest.fixture
 def path_xtb_xlsx() -> Path:
-    return INVESTD_SOURCES / "xtb/xtb-statement.xlsx"
+    return config.INVESTD_SOURCES / "xtb/xtb-statement.xlsx"
 
 
 @pytest.fixture
 def path_xtb_csv() -> Path:
-    return INVESTD_SOURCES / "xtb/xtb-statement.csv"
+    return config.INVESTD_SOURCES / "xtb/xtb-statement.csv"
 
 
 @pytest.fixture
 def path_bonds_xls() -> Path:
-    return INVESTD_SOURCES / "bonds/bonds-statement.xls"
+    return config.INVESTD_SOURCES / "bonds/bonds-statement.xls"
 
 
 @pytest.fixture
 def path_bossa_csv() -> Path:
-    return INVESTD_SOURCES / "bossa/bossa-statement.csv"
+    return config.INVESTD_SOURCES / "bossa/bossa-statement.csv"
 
 
 @pytest.fixture
@@ -85,13 +85,13 @@ def df_quotes_minimal() -> pd.DataFrame:
 
 @pytest.fixture
 def df_quotes() -> pd.DataFrame:
-    return pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME, parse_dates=["date"])
+    return pd.read_csv(config.INVESTD_PERSIST / QUOTES_FILENAME, parse_dates=["date"])
 
 
 @pytest.fixture
 def yfinance_quotes() -> pd.DataFrame:
     df_quotes = pd.read_csv(
-        INVESTD_PERSIST / "yfinance_quotes.csv", header=[0, 1], index_col=0
+        config.INVESTD_PERSIST / "yfinance_quotes.csv", header=[0, 1], index_col=0
     )
     df_quotes.index = df_quotes.index.map(pd.to_datetime)
     return df_quotes
