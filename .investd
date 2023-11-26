@@ -1,0 +1,3 @@
+# Investd will read configuration variables from a file named .investd in the current working directory if available.
+INVESTD_REF_CURRENCY = PLN
+INVESTD_DATA = sample_data
