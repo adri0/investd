@@ -15,7 +15,15 @@ from investd.common import Currency
 
 log = logging.getLogger(__name__)
 
-INVESTD_DATA = Path(os.getenv("INVESTD_DATA", "investd_data"))
+
+if not os.getenv("INVESTD_DATA"):
+    log.warn(
+        "INVESTD_DATA environment variable not set. "
+        "Using current working directory as INVESTD_DATA."
+    )
+
+
+INVESTD_DATA = Path(os.getenv("INVESTD_DATA", "."))
 INVESTD_SOURCES = Path(os.getenv("INVESTD_SOURCES", INVESTD_DATA / "sources"))
 INVESTD_PERSIST = Path(os.getenv("INVESTD_PERSIST", INVESTD_DATA / "persist"))
 INVESTD_REPORTS = Path(os.getenv("INVESTD_REPORTS", INVESTD_DATA / "reports"))
@@ -36,11 +44,10 @@ def init_dirs() -> None:
     Check if data dirs exist, create them otherwise.
     """
     config_vars = get_config_variables().items()
-    log.info(", ".join(f"{name}: {value}" for name, value in config_vars))
+    log.debug(", ".join(f"{name}: {value}" for name, value in config_vars))
     if not INVESTD_DATA.exists():
         print(
             f"INVESTD_DATA directory ({INVESTD_DATA}) doesn't exist. "
             "Let me create it for you."
         )
-    for conf_path in (INVESTD_SOURCES, INVESTD_PERSIST, INVESTD_REPORTS):
-        conf_path.mkdir(exist_ok=True)
+        INVESTD_DATA.mkdir(exist_ok=True, parents=True)
