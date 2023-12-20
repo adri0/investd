@@ -52,7 +52,7 @@ profile = "black"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-env_files = "tests/resources/.test.env"
+env_files = "tests/resources/.investd"
 
 [tool.mypy]
 plugins = "pydantic.mypy"
