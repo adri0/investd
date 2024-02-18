@@ -5,11 +5,14 @@ import jupytext
 from nbconvert.exporters import HTMLExporter, export
 from nbconvert.preprocessors import ExecutePreprocessor
 
-from investd.config import INVESTD_REF_CURRENCY, INVESTD_REPORTS
+from investd import config
+from investd.exceptions import NoTransactions
+from investd.transaction import load_transactions
 
 
 def generate_report(notebook_name: str) -> Path:
     path_notebook = Path(__file__).parent / f"{notebook_name}.py"
+    _assert_transactions()
     notebook = jupytext.read(path_notebook)
     preprocessor = ExecutePreprocessor(timeout=10, kernel_name="python3")
     nb_executed, _ = preprocessor.preprocess(
@@ -32,8 +35,15 @@ def generate_report(notebook_name: str) -> Path:
 
 def _save_report(name: str, content: str) -> Path:
     today = datetime.today().strftime("%Y-%m-%d")
-    filename = f"{name}_{today}_{INVESTD_REF_CURRENCY}.html"
-    report_path = INVESTD_REPORTS / filename
+    filename = f"{name}_{today}_{config.INVESTD_REF_CURRENCY}.html"
+    report_path = config.INVESTD_REPORTS / filename
+    report_path.parent.mkdir(exist_ok=True, parents=True)
     with report_path.open("w") as out_file:
         out_file.write(content)
     return report_path
+
+
+def _assert_transactions() -> None:
+    df_tx = load_transactions()
+    if df_tx.empty:
+        raise NoTransactions()

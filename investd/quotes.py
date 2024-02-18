@@ -1,3 +1,4 @@
+import logging
 from datetime import date
 from pathlib import Path
 from typing import Iterable, Optional
@@ -5,9 +6,11 @@ from typing import Iterable, Optional
 import pandas as pd
 import yfinance
 
+from investd import config
 from investd.common import Currency
-from investd.config import INVESTD_PERSIST, INVESTD_REF_CURRENCY
 from investd.transaction import load_transactions
+
+log = logging.getLogger(__name__)
 
 QUOTES_FILENAME = "quotes.csv"
 SYMBOL_EXCH_ADJUST = {"FR": "PA", "UK": "L", "PL": "WA"}
@@ -74,18 +77,22 @@ def download_quotes_to_csv(
         id_vars=["date"], value_vars=df.columns, var_name="symbol", value_name="price"
     )
     df = df.sort_values(["date", "symbol"])
-
-    df.to_csv(output_path or INVESTD_PERSIST / QUOTES_FILENAME, index=False)
+    output_path = output_path or (config.INVESTD_PERSIST / QUOTES_FILENAME)
+    output_path.parent.mkdir(exist_ok=True, parents=True)
+    df.to_csv(output_path, index=False)
 
 
 def load_quotes() -> pd.DataFrame:
-    return pd.read_csv(INVESTD_PERSIST / QUOTES_FILENAME, parse_dates=["date"])
+    if not (config.INVESTD_PERSIST / QUOTES_FILENAME).exists():
+        log.warn("Quotes files does not exist.")
+        return pd.DataFrame(columns=["date", "symbol", "price"])
+    return pd.read_csv((config.INVESTD_PERSIST / QUOTES_FILENAME), parse_dates=["date"])
 
 
 def extract_exchange_rates_symbols(
     df_tx: pd.DataFrame, ref_currency: Optional[Currency] = None
 ) -> set[str]:
-    ref_currency = ref_currency or INVESTD_REF_CURRENCY
+    ref_currency = ref_currency or config.INVESTD_REF_CURRENCY
     return {
         f"{cur}{ref_currency}=X"
         for cur in df_tx["currency"].unique()

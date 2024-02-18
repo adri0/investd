@@ -1,13 +1,13 @@
+import datetime
 import logging
 import os
-from datetime import date
 from pathlib import Path
 from typing import Optional
 
 import click
 
-from investd import quotes, reports, sources
-from investd.config import INVESTD_PERSIST, init_dirs
+from investd import config, quotes, reports, sources
+from investd.exceptions import InvestdException
 from investd.transaction import TX_FILENAME
 
 APP_NAME = "investd"
@@ -32,13 +32,11 @@ cli = click.Group(name=APP_NAME, help=HELP_TEXT)
 @click.option(
     "--output",
     type=click.Path(dir_okay=False, writable=True),
-    default=INVESTD_PERSIST / TX_FILENAME,
+    default=config.INVESTD_PERSIST / TX_FILENAME,
     help="Output path",
 )
 def ingest_sources_cmd(output: Path):
-    df_tx = sources.ingest_all()
-    log.info(f"Writing {output}")
-    df_tx.to_csv(output, index=False)
+    sources.ingest_to_path(output)
 
 
 @cli.command(name="report")
@@ -62,9 +60,8 @@ def ingest_sources_cmd(output: Path):
 )
 def report_cmd(report: str, ingest: bool, date: Optional[str]):
     if ingest:
-        df_tx = sources.ingest_all()
-        df_tx.to_csv(INVESTD_PERSIST / TX_FILENAME, index=False)
-    os.environ["REPORT_DATE"] = date
+        sources.ingest_to_path()
+    os.environ["REPORT_DATE"] = date or str(datetime.date.today())
     path_output = reports.generate_report(report)
     log.info(f"Report created: {path_output}")
     print(path_output)
@@ -81,8 +78,8 @@ def report_cmd(report: str, ingest: bool, date: Optional[str]):
 @click.option("--symbols", "-y", default=None, help="Symbols e.g. AAPL,CDR.PL")
 def quotes_cmd(start: Optional[str], end: Optional[str], symbols: Optional[str]):
     quotes.download_quotes_to_csv(
-        start_date=date.fromisoformat(start) if start else None,
-        end_date=date.fromisoformat(end) if end else None,
+        start_date=datetime.date.fromisoformat(start) if start else None,
+        end_date=datetime.date.fromisoformat(end) if end else None,
         symbols=symbols.split(",") if symbols else None,
         include_exchange_rates=True,
     )
@@ -90,7 +87,12 @@ def quotes_cmd(start: Optional[str], end: Optional[str], symbols: Optional[str])
 
 def main() -> None:
     init_dirs()
-    cli()
+    try:
+        cli()
+    except InvestdException as exc:
+        log.error(exc.msg, exc_info=True)
+        click.echo(exc.msg)
+        exit(1)
 
 
 if __name__ == "__main__":
