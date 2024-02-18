@@ -86,7 +86,7 @@ def quotes_cmd(start: Optional[str], end: Optional[str], symbols: Optional[str])
 
 
 def main() -> None:
-    init_dirs()
+    config.init_dirs()
     try:
         cli()
     except InvestdException as exc:
