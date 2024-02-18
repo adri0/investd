@@ -6,7 +6,7 @@ from pytest import MonkeyPatch
 
 import investd
 from investd.__main__ import cli
-from investd.errors import NoTransactions
+from investd.exceptions import NoTransactions
 
 
 @pytest.fixture

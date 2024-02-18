@@ -7,7 +7,7 @@ from typing import Optional
 import click
 
 from investd import config, quotes, reports, sources
-from investd.errors import InvestdError
+from investd.exceptions import InvestdException
 from investd.transaction import TX_FILENAME
 
 APP_NAME = "investd"
@@ -89,7 +89,7 @@ def main() -> None:
     init_dirs()
     try:
         cli()
-    except InvestdError as exc:
+    except InvestdException as exc:
         log.error(exc.msg, exc_info=True)
         click.echo(exc.msg)
         exit(1)

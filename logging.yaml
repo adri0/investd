@@ -16,7 +16,7 @@ loggers:
   app:
     handlers:
     - console
-    level: DEBUG
+    level: INFO
     propagate: false
 root:
   handlers:

@@ -6,7 +6,7 @@ from nbconvert.exporters import HTMLExporter, export
 from nbconvert.preprocessors import ExecutePreprocessor
 
 from investd import config
-from investd.errors import NoTransactions
+from investd.exceptions import NoTransactions
 from investd.transaction import load_transactions
 
 
