@@ -23,7 +23,9 @@ class RevolutStocks(SourceBase):
                 price = float(row["Price per share"].replace("$", "").replace(",", ""))
                 yield Transaction(
                     id="",
-                    timestamp=dateutil.parser.isoparse(row["Date"]),
+                    timestamp=dateutil.parser.isoparse(row["Date"]).replace(
+                        tzinfo=None
+                    ),
                     symbol=row["Ticker"],
                     type=AssetType.Stock,
                     platform=self.source_name,
