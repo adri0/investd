@@ -1,11 +1,12 @@
 from datetime import datetime
+from pathlib import Path
 
 from investd.common import Action, AssetType, Currency
 from investd.sources.bossa import Bossa
 from investd.transaction import Transaction
 
 
-def test_parse_bossa(path_bossa_csv):
+def test_parse_bossa(path_bossa_csv: Path) -> None:
     bossa_source = Bossa()
     txs = list(bossa_source.parse_source_file(path_bossa_csv))
     assert len(txs) == 2

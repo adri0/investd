@@ -35,7 +35,7 @@ class XTB(SourceBase):
                 path, usecols=INPUT_COLUMNS, parse_dates=[COL_TIME], sep=";"
             )
         else:
-            return []
+            return iter([])
 
         df = df[~pd.isna(df[COL_SYMBOL])]
         return map(lambda i_row: self._convert(i_row[1]), df.iterrows())

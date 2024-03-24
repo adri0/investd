@@ -8,12 +8,11 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Office/Business :: Financial :: Investment",
 ]
-license = {file = "LICENSE.txt"}
-authors = [
-  {name = "adri0"}
-]
+license = { file = "LICENSE.txt" }
+authors = [{ name = "adri0" }]
 dependencies = [
     "click",
     "ipython",
@@ -26,14 +25,14 @@ dependencies = [
     "PyYAML",
     "seaborn",
     "xlrd",
-    "yfinance"
+    "yfinance",
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/adri0/investd"
 
 [project.optional-dependencies]
-dev = ["black", "isort", "mypy", "types-python-dateutil"]
+dev = ["ruff", "mypy", "types-python-dateutil", "types-PyYAML", "pandas-stubs"]
 test = ["pytest", "pytest-cov", "pytest-dotenv"]
 
 [project.scripts]
@@ -47,8 +46,9 @@ build-backend = "setuptools.build_meta"
 include = ["investd*"]
 exclude = ["tests*"]
 
-[tool.isort]
-profile = "black"
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "RUF", "N", "ANN"]
+ignore = ["ANN101", "ANN401"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -58,7 +58,4 @@ env_files = "tests/resources/.investd"
 plugins = "pydantic.mypy"
 ignore_missing_imports = false
 follow_imports = "silent"
-
-[[tool.mypy.overrides]]
-module = "pandas"
-ignore_missing_imports = true
+disable_error_code = "import-untyped"

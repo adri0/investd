@@ -1,7 +1,7 @@
 """
-    Portfolio metrics
+Portfolio metrics
 
-    Functions for calculating portfolio metrics, such as net worth, etc.
+Functions for calculating portfolio metrics, such as net worth, etc.
 """
 
 from datetime import date
@@ -20,7 +20,7 @@ def _add_signed_cols(df_tx: pd.DataFrame) -> pd.DataFrame:
     """
     cols = ("amount_ref_currency", "amount", "quantity")
 
-    def get_signed_amount(row, col: str) -> float:
+    def get_signed_amount(row: pd.Series, col: str) -> float:
         return row[col] * (-1 if row["action"] == Action.SELL else 1)
 
     for col in cols:
@@ -39,10 +39,10 @@ def total_invested_ref_currency(df_tx: pd.DataFrame) -> float:
     return df_tx["amount_ref_currency_signed"].sum()
 
 
-def to_nice_df(ndf: pd.core.generic.NDFrame, columns: Iterable[str]) -> pd.DataFrame:
+def to_nice_df(ndf: pd.DataFrame | pd.Series, columns: Iterable[str]) -> pd.DataFrame:
     """Transforms series into a nice looking dataframe in a notebook."""
     df = pd.DataFrame(ndf)
-    df = df.applymap(round, ndigits=2)
+    df = df.applymap(round, ndigits=2)  # type: ignore
     df.columns = pd.Index(columns).map(str)
     df.index.set_names(None, inplace=True)
     return df
@@ -56,7 +56,7 @@ def add_pct_col(
     return df
 
 
-def invested_ref_amount_by_col(df_tx: pd.DataFrame, col: str) -> pd.Series:
+def invested_ref_amount_by_col(df_tx: pd.DataFrame, col: str) -> pd.DataFrame:
     """
     Generates a Series with invested amount by asset type in the reference currency.
     """
@@ -68,7 +68,7 @@ def invested_ref_amount_by_col(df_tx: pd.DataFrame, col: str) -> pd.Series:
     return df
 
 
-def amounts_by_currency(df_tx: pd.DataFrame) -> pd.Series:
+def amounts_by_currency(df_tx: pd.DataFrame) -> pd.DataFrame:
     """
     Amounts aggregated by currency, showing invested amounts in
     original currency and reference currency.
@@ -85,7 +85,7 @@ def amounts_by_currency(df_tx: pd.DataFrame) -> pd.Series:
 
 def invested_amount_original_cur_by_col(
     df_tx: pd.DataFrame, col: str
-) -> pd.core.generic.NDFrame:
+) -> pd.DataFrame | pd.Series:
     """
     Aggregate invested amount by currency.
     """
@@ -104,7 +104,7 @@ def amount_over_time(df_tx: pd.DataFrame, period: str) -> pd.DataFrame:
         .groupby(pd.Grouper(key="timestamp", freq=period))
         .sum()
     )
-    df_ot.index = df_ot.index.to_period()
+    df_ot.index = df_ot.index.to_period()  # type: ignore
     df_ot["cumsum"] = df_ot["amount_ref_currency_signed"].cumsum()
     ref_currency = config.INVESTD_REF_CURRENCY
     df_ot = to_nice_df(df_ot, columns=[str(ref_currency), f"Cumulated {ref_currency}"])

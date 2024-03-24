@@ -1,6 +1,6 @@
-class InvestdException(Exception):
+class InvestdError(Exception):
     msg: str
 
 
-class NoTransactions(InvestdException):
+class NoTransactionsError(InvestdError):
     msg = "No transactions! Make sure you have non-empty files in the sources folder according to each source."

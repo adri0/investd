@@ -1,8 +1,8 @@
 """
-    Configuration
+Configuration
 
-    Config variables are obtained from environment variables and converted
-    to their object type.
+Config variables are obtained from environment variables and converted
+to their object type.
 """
 
 import logging

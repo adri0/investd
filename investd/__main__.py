@@ -7,7 +7,7 @@ from typing import Optional
 import click
 
 from investd import config, quotes, reports, sources
-from investd.exceptions import InvestdException
+from investd.exceptions import InvestdError
 from investd.transaction import TX_FILENAME
 
 APP_NAME = "investd"
@@ -35,7 +35,7 @@ cli = click.Group(name=APP_NAME, help=HELP_TEXT)
     default=config.INVESTD_PERSIST / TX_FILENAME,
     help="Output path",
 )
-def ingest_sources_cmd(output: Path):
+def ingest_sources_cmd(output: Path) -> None:
     sources.ingest_to_path(output)
 
 
@@ -58,7 +58,7 @@ def ingest_sources_cmd(output: Path):
     default=None,
     help="Show portfolio at a certain date. Use today if not provided.",
 )
-def report_cmd(report: str, ingest: bool, date: Optional[str]):
+def report_cmd(report: str, ingest: bool, date: Optional[str]) -> None:
     if ingest:
         sources.ingest_to_path()
     os.environ["REPORT_DATE"] = date or str(datetime.date.today())
@@ -76,7 +76,9 @@ def report_cmd(report: str, ingest: bool, date: Optional[str]):
 @click.option("--start", "-s", default=None, help="Starting date in format YYYY-MM-DD")
 @click.option("--end", "-e", default=None, help="End date in format YYYY-MM-DD")
 @click.option("--symbols", "-y", default=None, help="Symbols e.g. AAPL,CDR.PL")
-def quotes_cmd(start: Optional[str], end: Optional[str], symbols: Optional[str]):
+def quotes_cmd(
+    start: Optional[str], end: Optional[str], symbols: Optional[str]
+) -> None:
     quotes.download_quotes_to_csv(
         start_date=datetime.date.fromisoformat(start) if start else None,
         end_date=datetime.date.fromisoformat(end) if end else None,
@@ -89,7 +91,7 @@ def main() -> None:
     config.init_dirs()
     try:
         cli()
-    except InvestdException as exc:
+    except InvestdError as exc:
         log.error(exc.msg, exc_info=True)
         click.echo(exc.msg)
         exit(1)
