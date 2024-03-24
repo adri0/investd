@@ -55,6 +55,7 @@ testpaths = ["tests"]
 env_files = "tests/resources/.investd"
 
 [tool.mypy]
+packages = ["investd", "tests"]
 plugins = "pydantic.mypy"
 ignore_missing_imports = false
 follow_imports = "silent"
