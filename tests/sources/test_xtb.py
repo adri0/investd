@@ -36,7 +36,7 @@ def test_parse_xtb_csv(path_xtb_csv: Path) -> None:
     tx: Transaction = txs[0]
     assert tx.id == "130876160"
     assert tx.symbol == "IBC5.DE"
-    assert tx.timestamp == datetime(2022, 9, 12, 12, 9, 37)
+    assert tx.timestamp == datetime(2022, 12, 9, 12, 9, 37)
     assert tx.type == AssetType.ETF
     assert tx.platform == "xtb"
     assert tx.currency == Currency.EUR
