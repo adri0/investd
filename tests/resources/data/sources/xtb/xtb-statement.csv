@@ -5,3 +5,4 @@ ID;Type;Time;Symbol;Comment;Amount
 130658625;Deposit;08.12.2022 19:15:04;;Pekao S.A. deposit, Pekao S.A. provider transaction id=NL9S2567123361Z, Pekao S.A. merchant reference id=65165, id=1123;426.46
 120055884;Stocks/ETF purchase;09.11.2022 14:57:11;IBC5.DE;OPEN BUY 7 @ 5.0220;-35.15
 120045385;Stocks/ETF purchase;09.11.2022 14:37:19;SXR8.DE;OPEN BUY 1 @ 392.20;-392.2
+207157984;Dividend;29.12.2021 12:00:01;VHYD.UK;VHYD.UK USD 0.5074/ SHR;12.34

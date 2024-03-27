@@ -16,6 +16,7 @@ COL_TIME = "Time"
 COL_TYPE = "Type"
 
 INPUT_COLUMNS = [COL_AMOUNT, COL_COMMENT, COL_ID, COL_SYMBOL, COL_TIME, COL_TYPE]
+SUPPORTED_TYPES = {"Stocks/ETF purchase", "Stocks/ETF sale"}
 
 
 class XTB(SourceBase):
@@ -29,22 +30,27 @@ class XTB(SourceBase):
                 skiprows=10,
                 usecols=INPUT_COLUMNS,
                 parse_dates=[COL_TIME],
+                date_format="%d.%m.%Y %H:%M:%S",
             )
         elif path.suffix == ".csv":
             df = pd.read_csv(
-                path, usecols=INPUT_COLUMNS, parse_dates=[COL_TIME], sep=";"
+                path,
+                usecols=INPUT_COLUMNS,
+                sep=";",
+                parse_dates=[COL_TIME],
+                date_format="%d.%m.%Y %H:%M:%S",
             )
         else:
             return iter([])
 
-        df = df[~pd.isna(df[COL_SYMBOL])]
+        df = df[pd.notna(df[COL_SYMBOL]) & df[COL_TYPE].isin(SUPPORTED_TYPES)]
         return map(lambda i_row: self._convert(i_row[1]), df.iterrows())
 
     def _convert(self, record: pd.Series) -> Transaction:
         action, quantity, price = XTB.parse_comment(record[COL_COMMENT])
         return Transaction(
             id=str(record[COL_ID]),
-            timestamp=record[COL_TIME],
+            timestamp=pd.to_datetime(record[COL_TIME]),
             symbol=record[COL_SYMBOL],
             type=AssetType.ETF,
             platform=self.source_name,
