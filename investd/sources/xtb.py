@@ -41,7 +41,7 @@ class XTB(SourceBase):
                 date_format="%d.%m.%Y %H:%M:%S",
             )
         else:
-            return []
+            return iter([])
 
         df = df[pd.notna(df[COL_SYMBOL]) & df[COL_TYPE].isin(SUPPORTED_TYPES)]
         return map(lambda i_row: self._convert(i_row[1]), df.iterrows())

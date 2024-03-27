@@ -6,7 +6,7 @@ from nbconvert.exporters import HTMLExporter, export
 from nbconvert.preprocessors import ExecutePreprocessor
 
 from investd import config
-from investd.exceptions import NoTransactions
+from investd.exceptions import NoTransactionsError
 from investd.transaction import load_transactions
 
 
@@ -46,4 +46,4 @@ def _save_report(name: str, content: str) -> Path:
 def _assert_transactions() -> None:
     df_tx = load_transactions()
     if df_tx.empty:
-        raise NoTransactions()
+        raise NoTransactionsError()

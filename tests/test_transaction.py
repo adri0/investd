@@ -4,7 +4,7 @@ from investd.common import Action, AssetType
 from investd.transaction import load_transactions
 
 
-def test_load_transactions():
+def test_load_transactions() -> None:
     df_tx = load_transactions()
     assert df_tx.shape == (19, 12)
     assert df_tx["timestamp"].dtype == "datetime64[ns]"

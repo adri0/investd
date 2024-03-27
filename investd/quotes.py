@@ -67,14 +67,17 @@ def download_quotes_to_csv(
     # transform yfinance table to simpler format
     df = pd.DataFrame.from_dict(
         {
-            symbol: df_quotes.loc[:, (adj_symbol, "Close")]
+            symbol: df_quotes.loc[:, (adj_symbol, "Close")]  # type: ignore
             for adj_symbol, symbol in adjusted_symbol_to_symbol.items()
             if adj_symbol in df_quotes.columns.get_level_values(0)
         }
     )
     df["date"] = df_quotes.index
     df = df.melt(
-        id_vars=["date"], value_vars=df.columns, var_name="symbol", value_name="price"
+        id_vars=["date"],
+        value_vars=list(df.columns),
+        var_name="symbol",
+        value_name="price",
     )
     df = df.sort_values(["date", "symbol"])
     output_path = output_path or (config.INVESTD_PERSIST / QUOTES_FILENAME)

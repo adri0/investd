@@ -15,7 +15,7 @@ class TestSource(SourceBase):
             yield Transaction(**row)
 
 
-def test_ingest_source():
+def test_ingest_source() -> None:
     test_source = TestSource()
     txs = list(test_source.load_transactions())
     assert len(txs) == 1
