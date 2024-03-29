@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 from pytest import approx
 
@@ -7,7 +8,7 @@ from investd.sources.bonds import Bonds
 from investd.transaction import Transaction
 
 
-def test_parse_bonds(path_bonds_xls):
+def test_parse_bonds(path_bonds_xls: Path) -> None:
     bonds_source = Bonds()
     txs = list(bonds_source.parse_source_file(path_bonds_xls))
     assert len(txs) == 5

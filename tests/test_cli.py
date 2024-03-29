@@ -6,7 +6,7 @@ from pytest import MonkeyPatch
 
 import investd
 from investd.__main__ import cli
-from investd.exceptions import NoTransactions
+from investd.exceptions import NoTransactionsError
 
 
 @pytest.fixture
@@ -19,4 +19,4 @@ def empty_data_dir(monkeypatch: MonkeyPatch, tmp_path: Path) -> Path:
 
 def test_new_data_dir(empty_data_dir: Path) -> None:
     result = CliRunner().invoke(cli, ["report"])
-    assert isinstance(result.exception, NoTransactions)
+    assert isinstance(result.exception, NoTransactionsError)

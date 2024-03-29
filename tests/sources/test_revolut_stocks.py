@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 from pytest import approx
 
@@ -7,7 +8,7 @@ from investd.sources.revolut_stocks import RevolutStocks
 from investd.transaction import Transaction
 
 
-def test_parse_revolut_stocks(path_revolut_csv):
+def test_parse_revolut_stocks(path_revolut_csv: Path) -> None:
     revolut_source = RevolutStocks()
     txs = list(revolut_source.parse_source_file(path_revolut_csv))
     assert len(txs) == 5

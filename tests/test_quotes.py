@@ -1,5 +1,6 @@
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -42,7 +43,7 @@ def test_download_quotes_csv(
 
     yfinance_download_call_args = {}
 
-    def mock_yfinance_download(*args, **kwargs):
+    def mock_yfinance_download(*args: Any, **kwargs: Any) -> pd.DataFrame:
         yfinance_download_call_args.update(kwargs)
         return yfinance_quotes
 
@@ -83,7 +84,9 @@ def test_load_quotes() -> None:
 def _expected_rows() -> int:
     df_tx = load_transactions()
     symbol_count = df_tx["symbol"].unique().size
-    business_days = np.busday_count(TEST_START_DATE, TEST_END_DATE, holidays=HOLIDAYS)
+    business_days = int(
+        np.busday_count(TEST_START_DATE, TEST_END_DATE, holidays=HOLIDAYS)
+    )
     return business_days * symbol_count
 
 

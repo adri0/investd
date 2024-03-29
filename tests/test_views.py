@@ -10,7 +10,7 @@ from investd.common import AssetType as Asset
 from investd.common import Currency as Cur
 
 
-def test_total_invested_amount(df_tx_minimal: pd.DataFrame):
+def test_total_invested_amount(df_tx_minimal: pd.DataFrame) -> None:
     assert views.total_invested_ref_currency(df_tx_minimal) == 2349.0
 
 
@@ -25,14 +25,14 @@ def test_total_invested_amount(df_tx_minimal: pd.DataFrame):
 )
 def test_invested_ref_amount_col(
     df_tx_minimal: pd.DataFrame, col: str, expected: pd.Series
-):
+) -> None:
     assert views.invested_ref_amount_by_col(df_tx_minimal, col).equals(
         views.add_pct_col(views.to_nice_df(expected, ["PLN"]), "PLN")
     )
 
 
 def _multi_cat_series(
-    values: Iterable[Any], first_level: Iterable[Any], second_level: Iterable[Any]
+    values: Iterable[Any], first_level: list[Any], second_level: list[Any]
 ) -> pd.Series:
     return pd.Series(
         values,
@@ -41,7 +41,7 @@ def _multi_cat_series(
                 pd.Categorical(first_level),
                 pd.Categorical(second_level),
             ]
-        ),
+        ),  # type: ignore
     )
 
 
@@ -64,14 +64,14 @@ def _multi_cat_series(
     ],
 )
 def test_invested_amount_currency_amount_col(
-    df_tx_minimal: pd.DataFrame, col: str, expected: pd.core.generic.NDFrame
-):
+    df_tx_minimal: pd.DataFrame, col: str, expected: pd.Series
+) -> None:
     assert views.invested_amount_original_cur_by_col(df_tx_minimal, col).equals(
         expected
     )
 
 
-def test_amounts_by_currency(df_tx_minimal: pd.DataFrame):
+def test_amounts_by_currency(df_tx_minimal: pd.DataFrame) -> None:
     expected = pd.DataFrame(
         {
             "Original currency": [190.0, 300.0],
@@ -106,7 +106,7 @@ def test_amounts_over_time(
     df_tx_minimal: pd.DataFrame,
     period: str,
     expected: pd.DataFrame,
-):
+) -> None:
     assert views.amount_over_time(df_tx_minimal, period).equals(expected)
 
 
