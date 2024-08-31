@@ -1,13 +1,16 @@
+import os
 from datetime import datetime
 from pathlib import Path
 
-import jupytext
-from nbconvert.exporters import HTMLExporter, export
-from nbconvert.preprocessors import ExecutePreprocessor
+os.environ["JUPYTER_PLATFORM_DIRS"] = "1"
 
-from investd import config
-from investd.exceptions import NoTransactionsError
-from investd.transaction import load_transactions
+import jupytext  # noqa: E402
+from nbconvert.exporters import HTMLExporter, export  # noqa: E402
+from nbconvert.preprocessors import ExecutePreprocessor  # noqa: E402
+
+from investd import config  # noqa: E402
+from investd.exceptions import NoTransactionsError  # noqa: E402
+from investd.transaction import load_transactions  # noqa: E402
 
 
 def generate_report(notebook_name: str) -> Path:

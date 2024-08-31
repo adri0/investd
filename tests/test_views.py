@@ -87,14 +87,14 @@ def test_amounts_by_currency(df_tx_minimal: pd.DataFrame) -> None:
     "period, expected",
     [
         (
-            "Y",
+            "YE",
             pd.DataFrame(
                 {"PLN": [450, 1899], "Cumulated PLN": [450, 2349]},
                 index=pd.PeriodIndex(["2021", "2022"], freq="Y"),
             ),
         ),
         (
-            "M",
+            "ME",
             pd.DataFrame(
                 {"PLN": [450, 2175, -276], "Cumulated PLN": [450, 2625, 2349]},
                 index=pd.PeriodIndex(["2021-12", "2022-01", "2022-02"], freq="M"),
