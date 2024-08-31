@@ -16,7 +16,7 @@ COL_TIME = "Time"
 COL_TYPE = "Type"
 
 INPUT_COLUMNS = [COL_AMOUNT, COL_COMMENT, COL_ID, COL_SYMBOL, COL_TIME, COL_TYPE]
-SUPPORTED_TYPES = {"Stocks/ETF purchase", "Stocks/ETF sale"}
+SUPPORTED_TYPES = {"Stocks/ETF purchase": Action.BUY, "Stocks/ETF sale": Action.SELL}
 
 
 class XTB(SourceBase):
@@ -47,10 +47,10 @@ class XTB(SourceBase):
         return map(lambda i_row: self._convert(i_row[1]), df.iterrows())
 
     def _convert(self, record: pd.Series) -> Transaction:
-        action, quantity, price = XTB.parse_comment(record[COL_COMMENT])
+        quantity, price = XTB.parse_comment(record[COL_COMMENT])
         return Transaction(
             id=str(record[COL_ID]),
-            timestamp=pd.to_datetime(record[COL_TIME]),
+            timestamp=record[COL_TIME],
             symbol=record[COL_SYMBOL],
             type=AssetType.ETF,
             platform=self.source_name,
@@ -60,16 +60,16 @@ class XTB(SourceBase):
             price=price,
             exchange_rate=abs(record[COL_AMOUNT]) / price / quantity,
             amount_ref_currency=abs(record[COL_AMOUNT]),
-            action=Action(action.upper()),
+            action=Action(SUPPORTED_TYPES[record[COL_TYPE]]),
         )
 
     @staticmethod
-    def parse_comment(comment: str) -> tuple[str, float, float]:
+    def parse_comment(comment: str) -> tuple[float, float]:
         for match in re.finditer(
-            r"(?P<action>BUY|SELL) (?P<quantity>[\d.]+)(/\d+)? @ (?P<price>[\d.]+)",
+            r"(?P<quantity>[\d.]+)(/\d+)? @ (?P<price>[\d.]+)",
             comment,
         ):
-            return match["action"], float(match["quantity"]), float(match["price"])
+            return float(match["quantity"]), float(match["price"])
         raise ValueError(
             f"No matches found for comment pattern in Comment: '{comment}'"
         )
