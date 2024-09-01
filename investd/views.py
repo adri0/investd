@@ -125,8 +125,7 @@ def portfolio_value(
             "platform": "first",
         }
     )
-    df_quotes_date = df_quotes[df_quotes["date"] == at_date_ts]
-    quotes = df_quotes_date.set_index("symbol")["price"]
+    quotes = get_latest_quotes(df_quotes, at_date)
     df_portfolio["quote"] = df_portfolio.index.map(quotes)
     df_portfolio["amount_at_date"] = (
         df_portfolio["quote"] * df_portfolio["quantity_signed"]
@@ -135,7 +134,7 @@ def portfolio_value(
     exchange_rate_to_ref_cur = (
         df_portfolio["currency"]
         .map(
-            lambda cur: quotes.get(f"{cur}{ref_currency}=X")  # type: ignore
+            lambda cur: quotes.get(f"{cur}{ref_currency}=X")
             if cur != ref_currency
             else 1
         )
@@ -155,3 +154,17 @@ def portfolio_value(
         axis=1,
     )
     return df_portfolio
+
+
+def get_latest_quotes(df_quotes: pd.DataFrame, at_date: date) -> dict[str, float]:
+    """Given quotes table and a date, returns a dict with the latest quote available
+    every symbol up to the date."""
+
+    df_quotes = df_quotes[df_quotes["date"] <= pd.Timestamp(at_date)]
+    latest_quotes = (
+        df_quotes.loc[df_quotes.groupby("symbol")["date"].idxmax()]
+        .set_index("symbol")["price"]
+        .to_dict()
+    )
+
+    return latest_quotes

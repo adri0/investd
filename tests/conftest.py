@@ -76,9 +76,11 @@ def df_tx_minimal() -> pd.DataFrame:
 def df_quotes_minimal() -> pd.DataFrame:
     return pd.DataFrame(
         {
-            "date": pd.to_datetime(["2022-01-30"] * 5),
-            "symbol": ["LOL", "TLDR", "XOXO", "USDPLN=X", "EURPLN=X"],
-            "price": [55, 20, 160, 4.6, 5.0],
+            "date": map(
+                pd.to_datetime, ["2022-01-28", "2022-01-29"] + ["2022-01-30"] * 4
+            ),
+            "symbol": ["LOL", "LOL", "TLDR", "XOXO", "USDPLN=X", "EURPLN=X"],
+            "price": [51, 55, 20, 160, 4.6, 5.0],
         }
     )
 

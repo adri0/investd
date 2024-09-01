@@ -140,3 +140,16 @@ def test_portfolio_value(
         index=pd.Index(["LOL", "TLDR", "XOXO"], name="symbol"),
     )
     assert_frame_equal(df_portfolio, expected)
+
+
+def test_latest_quotes(df_quotes_minimal: pd.DataFrame) -> None:
+    latest_quotes = views.get_latest_quotes(
+        df_quotes_minimal, date.fromisoformat("2022-01-30")
+    )
+    assert latest_quotes == {
+        "LOL": 55,
+        "TLDR": 20,
+        "XOXO": 160,
+        "USDPLN=X": 4.6,
+        "EURPLN=X": 5.0,
+    }
