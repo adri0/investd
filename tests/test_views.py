@@ -3,7 +3,7 @@ from typing import Any, Iterable
 
 import pandas as pd
 import pytest
-from pandas.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal, assert_series_equal
 
 from investd import views
 from investd.common import AssetType as Asset
@@ -31,34 +31,44 @@ def test_invested_ref_amount_col(
     )
 
 
-def _multi_cat_series(
-    values: Iterable[Any], first_level: list[Any], second_level: list[Any]
+def _series_2levels_categorical_index(
+    data: Iterable[Any], first_level: list[Any], second_level: list[Any]
 ) -> pd.Series:
     return pd.Series(
-        values,
+        data,
         index=pd.MultiIndex.from_product(
             [
                 pd.Categorical(first_level),
                 pd.Categorical(second_level),
-            ]
-        ),  # type: ignore
-    )
+            ]  # type: ignore
+        ),
+    ).dropna()
 
 
 @pytest.mark.parametrize(
     "col, expected",
     [
-        ("currency", pd.Series({Cur.USD: 190.0, Cur.EUR: 300.0})),
+        (
+            "currency",
+            pd.Series(
+                data=[190.0, 300.0],
+                index=pd.CategoricalIndex([Cur.USD, Cur.EUR]),  # type: ignore
+            ),
+        ),
         (
             "type",
-            _multi_cat_series(
-                [190.0, 0.0, 0.0, 300.0], [Cur.USD, Cur.EUR], [Asset.Stock, Asset.ETF]
+            _series_2levels_categorical_index(
+                data=[190.0, None, None, 300.0],
+                first_level=[Cur.USD, Cur.EUR],
+                second_level=[Asset.Stock, Asset.ETF],
             ),
         ),
         (
             "platform",
-            _multi_cat_series(
-                [190.0, 0.0, 0.0, 300.0], [Cur.USD, Cur.EUR], ["revolut_stocks", "xtb"]
+            _series_2levels_categorical_index(
+                data=[190.0, None, None, 300.0],
+                first_level=[Cur.USD, Cur.EUR],
+                second_level=["revolut_stocks", "xtb"],
             ),
         ),
     ],
@@ -66,9 +76,8 @@ def _multi_cat_series(
 def test_invested_amount_currency_amount_col(
     df_tx_minimal: pd.DataFrame, col: str, expected: pd.Series
 ) -> None:
-    assert views.invested_amount_original_cur_by_col(df_tx_minimal, col).equals(
-        expected
-    )
+    actual = views.invested_amount_original_cur_by_col(df_tx_minimal, col)
+    assert_series_equal(actual, expected, check_names=False)
 
 
 def test_amounts_by_currency(df_tx_minimal: pd.DataFrame) -> None:
@@ -78,9 +87,10 @@ def test_amounts_by_currency(df_tx_minimal: pd.DataFrame) -> None:
             "PLN": [849, 1500],
             "%": [36.1, 63.9],
         },
-        index=[Cur.USD, Cur.EUR],
+        index=pd.CategoricalIndex([Cur.USD, Cur.EUR]),  # type: ignore
     )
-    assert views.amounts_by_currency(df_tx_minimal).equals(expected)
+    actual = views.amounts_by_currency(df_tx_minimal)
+    assert_frame_equal(actual, expected, check_names=False)
 
 
 @pytest.mark.parametrize(

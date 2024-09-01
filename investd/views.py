@@ -61,7 +61,7 @@ def invested_ref_amount_by_col(df_tx: pd.DataFrame, col: str) -> pd.DataFrame:
     Generates a Series with invested amount by asset type in the reference currency.
     """
     df_tx = _add_signed_cols(df_tx)
-    grouped = df_tx.groupby(col, observed=False)["amount_ref_currency_signed"].sum()
+    grouped = df_tx.groupby(col, observed=True)["amount_ref_currency_signed"].sum()
     ref_currency = config.INVESTD_REF_CURRENCY
     df = to_nice_df(grouped, columns=[str(ref_currency)])
     df = add_pct_col(df, based_on_col=str(ref_currency))
@@ -74,7 +74,7 @@ def amounts_by_currency(df_tx: pd.DataFrame) -> pd.DataFrame:
     original currency and reference currency.
     """
     df_tx = _add_signed_cols(df_tx)
-    df_cur = df_tx.groupby("currency", observed=False)[
+    df_cur = df_tx.groupby("currency", observed=True)[
         ["amount_signed", "amount_ref_currency_signed"]
     ].sum()
     ref_currency = config.INVESTD_REF_CURRENCY
@@ -83,15 +83,13 @@ def amounts_by_currency(df_tx: pd.DataFrame) -> pd.DataFrame:
     return df_cur
 
 
-def invested_amount_original_cur_by_col(
-    df_tx: pd.DataFrame, col: str
-) -> pd.DataFrame | pd.Series:
+def invested_amount_original_cur_by_col(df_tx: pd.DataFrame, col: str) -> pd.Series:
     """
     Aggregate invested amount by currency.
     """
     df_tx = _add_signed_cols(df_tx)
     grouping: list[str] | str = ["currency", col] if col != "currency" else col
-    return df_tx.groupby(grouping, observed=False)["amount_signed"].sum()
+    return df_tx.groupby(grouping, observed=True)["amount_signed"].sum()
 
 
 def amount_over_time(df_tx: pd.DataFrame, period: str) -> pd.DataFrame:
