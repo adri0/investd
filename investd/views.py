@@ -135,7 +135,7 @@ def portfolio_value(
     exchange_rate_to_ref_cur = (
         df_portfolio["currency"]
         .map(
-            lambda cur: quotes.get(f"{cur}{ref_currency}=X")
+            lambda cur: quotes.get(f"{cur}{ref_currency}=X")  # type: ignore
             if cur != ref_currency
             else 1
         )
