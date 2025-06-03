@@ -1,5 +1,8 @@
+import os
 from datetime import datetime
 from pathlib import Path
+
+os.environ["JUPYTER_PLATFORM_DIRS"] = "1"
 
 import jupytext
 from nbconvert.exporters import HTMLExporter, export

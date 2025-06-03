@@ -86,11 +86,11 @@ ax.get_legend().remove()
 # ### Invested amount over time
 
 # %%
-df = views.amount_over_time(df_tx, period="Y")
+df = views.amount_over_time(df_tx, period="YE")
 display(df)
 
 # %%
-df = views.amount_over_time(df_tx, period="M").iloc[-12:]
+df = views.amount_over_time(df_tx, period="ME").iloc[-12:]
 display(df)
 
 # %%

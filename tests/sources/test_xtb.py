@@ -31,7 +31,7 @@ def test_parse_xtb_xlsx(path_xtb_xlsx: Path) -> None:
 def test_parse_xtb_csv(path_xtb_csv: Path) -> None:
     xtb_source = XTB()
     txs = list(xtb_source.parse_source_file(path_xtb_csv))
-    assert len(txs) == 5
+    assert len(txs) == 7
 
     tx: Transaction = txs[0]
     assert tx.id == "130876160"
@@ -49,8 +49,8 @@ def test_parse_xtb_csv(path_xtb_csv: Path) -> None:
 
 
 def test_parse_comment() -> None:
-    assert XTB.parse_comment("OPEN BUY 1 @ 467.03") == ("BUY", 1, 467.03)
-    assert XTB.parse_comment("OPEN BUY 10 @ 30.680") == ("BUY", 10, 30.68)
+    assert XTB.parse_comment("OPEN BUY 1 @ 467.03") == (1, 467.03)
+    assert XTB.parse_comment("OPEN BUY 10 @ 30.680") == (10, 30.68)
 
 
 def test_infer_currency() -> None:
